@@ -1,0 +1,6 @@
+<launch>
+  <arg name="my_str" default="yolov3"/>
+  <node pkg="minimal-package" exec="minimal-example" name="my_node_name" output="screen">
+    <param name="my_str" type="str" value="$(var my_str)"/>
+  </node>
+</launch>

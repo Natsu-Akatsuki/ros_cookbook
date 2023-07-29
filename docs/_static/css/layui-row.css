@@ -1,0 +1,42 @@
+.layui-row {
+    display: flex;
+    flex-flow: row wrap;
+    align-content: space-between;
+}
+
+.layui-row a:hover {
+    text-decoration: underline;
+}
+
+.layui-row div {
+    border: 1px solid #ddd;
+    height: 40px;
+    display: flex;
+    flex-flow: row wrap;
+    align-content: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    border-radius: 2px;
+    font-size: 12px;
+}
+
+.layui-row .no {
+    background-color: white;
+    color: black;
+}
+
+.nav {
+    position: fixed;
+    top: 192px;
+    width: 120px;
+    right: 20px;
+    z-index: 999;
+    background: #eee;
+    padding: 10px;
+}
+
+.nav a {
+    display: block;
+    padding: 2px;
+}
