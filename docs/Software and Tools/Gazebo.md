@@ -187,6 +187,15 @@ $ xacro model.xacro > model.urdf
 
 </details>
 
+<details>
+    <summary>:wrench: <b>用例 6：</b>
+        使用 Gazebo 搭建虚拟场景
+    </summary>
+
+Edit | Building Editor（或 CTRL+B）
+
+</details>
+
 ### Visualization
 
 <details>
