@@ -387,6 +387,10 @@ $ __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia gazebo
 
 </details>
 
+## Roadmap
+
+- [ ] 了解中科院的 Gazebo 环境是如何搭建的
+
 ## Reference
 
 - Official Document for [Gazebo Sim](https://gazebosim.org/home) and [Gazebo-classic](https://classic.gazebosim.org/)

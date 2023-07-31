@@ -490,17 +490,23 @@ RCLCPP_INFO(rclcpp::get_logger("rviz"), "clicked: (%d, %d)", event.x, event.y);
 
 </details>
 
+<details>
+    <summary>:wrench: <b>用例 3：</b>
+        将 RViz1 的配置文件转换为 RViz2 的配置文件（版本需大于等于 <a href="https://github.com/ros2/rviz/blob/iron/rviz2/scripts/rviz1_to_rviz2.py">Iron</a>）
+    </summary>
+</details>
+
 # Supplementary Materials
 
 ## Plugins
 
-|                             插件                             |                   备注                   |
-| :----------------------------------------------------------: | :--------------------------------------: |
-| [jsk_visualization](https://github.com/jsk-ros-pkg/jsk_visualization) |          目前只提供了 ROS1 版本          |
-| [vision_msgs_rviz_plugins](https://github.com/NovoG93/vision_msgs_rviz_plugins) |          目前只提供了 ROS2 版本          |
-| **[pointcloud2_normal_rviz_plugin](https://github.com/UCR-Robotics/pointcloud2_normal_rviz_plugin)** | 目前只提供了 ROS1 版本，用于可视化法向量 |
-| [miv_rviz_panel](https://github.com/quantumxt/miv_rviz_panel) |    用于在一个 Display 中显示多张图片     |
-| [plugin_lecture](https://github.com/project-srs/ros_lecture/tree/014c2e409c8eed7a17300cb73407c77379cbfba1/plugin_lecture) |        包含了 overlay 显示等插件         |
+|                                                            插件                                                             |           备注            |
+|:-------------------------------------------------------------------------------------------------------------------------:|:-----------------------:|
+|                           [jsk_visualization](https://github.com/jsk-ros-pkg/jsk_visualization)                           |     目前只提供了 ROS1 版本      |
+|                      [vision_msgs_rviz_plugins](https://github.com/NovoG93/vision_msgs_rviz_plugins)                      |     目前只提供了 ROS2 版本      |
+|           **[pointcloud2_normal_rviz_plugin](https://github.com/UCR-Robotics/pointcloud2_normal_rviz_plugin)**            | 目前只提供了 ROS1 版本，用于可视化法向量 |
+|                               [miv_rviz_panel](https://github.com/quantumxt/miv_rviz_panel)                               |  用于在一个 Display 中显示多张图片  |
+| [plugin_lecture](https://github.com/project-srs/ros_lecture/tree/014c2e409c8eed7a17300cb73407c77379cbfba1/plugin_lecture) |    包含了 overlay 显示等插件    |
 
 ## Others
 
