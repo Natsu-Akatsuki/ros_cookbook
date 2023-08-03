@@ -3,8 +3,8 @@
 - :child: Beginner
     - [Build Tool](Beginner/Build%20Tool.md)
     - [CMake and Package](Beginner/CMake%20and%20Package.md)
-    - [Concepts](Beginner/Concepts.md)
     - [Executor and Callback](Beginner/Executor%20and%20Callback.md)
+    - [Glossary](Beginner/Glossary.md)
     - [Header and Module](Beginner/Header%20and%20Module.md)
     - [Install](Beginner/Install.md)
     - [Interface](Beginner/Interface.md)

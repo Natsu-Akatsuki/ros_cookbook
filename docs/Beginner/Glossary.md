@@ -1,4 +1,4 @@
-# Concepts
+# Glossary
 
 > Someone who is sophomoric about concepts and reasoning may try things randomly, and wastes a lot of time.
 

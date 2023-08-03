@@ -358,6 +358,10 @@ $ __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia gazebo
 
 - [用 Blender 构建场景级模型](https://www.bilibili.com/video/BV1rT4y1P7HN/)
 
+## Tools
+
+- [Gazebo 模型库](https://app.gazebosim.org/dashboard)
+
 ## FAQ
 
 <details>

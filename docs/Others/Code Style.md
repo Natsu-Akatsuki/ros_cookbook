@@ -1,8 +1,11 @@
 # Code Style
 
-# C++
+## C++
 
-## Clang
+> [!tip]
+> 强烈建议在 ROS2 中遵循面向对象编程，不要使用全局变量来创节点，订阅器，发布器，否则会给你带来笑容：数据可能发不出去；进程结束后有析构错误的问题；运行时有各种奇奇怪怪的报错（需要开 DEBUG 模式来定位）
+
+### Clang
 
 - [ ] 对子类中需要重写的函数使用 `override` 关键字，表明其需要重写
 
@@ -21,7 +24,7 @@
 | under_scored_  |                          member_varibale                           |        —         |             —             |
 | g_under_scored |                         g_global_variable                          |        —         |             —             |
 
-# CMake
+## CMake
 
 ## ROS
 
@@ -36,7 +39,7 @@
 
 TODO
 
-# Launch
+## Launch
 
 1）代码格式化：VSCode 中使用 `XML Formatter` 进行格式化，缩进为 2 空格 \
 2）尽量使用 `substitution` 标签 \
@@ -58,6 +61,6 @@ TODO
 ```
 [//]: # (@formatter:on)
 
-# Reference
+## Reference
 
 - Code style for [ROS2](https://docs.ros.org/en/iron/The-ROS2-Project/Contributing/Code-Style-Language-Versions.html)
