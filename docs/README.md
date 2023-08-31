@@ -4,7 +4,7 @@
 
 解决方案索引库：记录基于 ROS（ROS1 和 ROS2）开发过程涉及的相关工具链、代码块
 
-:raised_eyebrow:  欢迎交流（[Issues](https://github.com/Natsu-Akatsuki/ros_cookbook/issues)，[PR](https://github.com/Natsu-Akatsuki/ros_cookbook/pulls)，[Discussions](https://github.com/Natsu-Akatsuki/ros_cookbook/discussions)）
+:raised_eyebrow: 欢迎交流（[Issues](https://github.com/Natsu-Akatsuki/ros_cookbook/issues)，[PR](https://github.com/Natsu-Akatsuki/ros_cookbook/pulls)，[Discussions](https://github.com/Natsu-Akatsuki/ros_cookbook/discussions)）
 
 网站见：[ros_cookbook - Docs](https://natsu-akatsuki.github.io/ros_cookbook/)
 
@@ -93,6 +93,15 @@
 
 以 ORBSLAM2 为例，如果不依赖 ROS 的话，第一要自己手写对传感器数据读取的程序，第二，设计的算法如果是分模块，模块之间要通讯的话，还要
 考量如何通讯；第三，还要写可视化的程序。凡此，都要花费大量的时间。
+
+</details>
+
+<details>
+    <summary>:question: <b>问题 6：</b>
+        当前索引库与官方文档有何异同
+    </summary>
+
+其实在编者多次浏览官方文档后，会觉得官方文档已提供了详细的线索和解决方案，当前索引库只是多了 ROS1 和 ROS2 的整合和部分工程上的线索
 
 </details>
 
