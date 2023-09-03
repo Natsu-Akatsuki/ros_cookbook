@@ -128,6 +128,19 @@ output_bag.write("/tf", tf_msg, msg.header.stamp)
 
 </details>
 
+<details>
+    <summary>:wrench: <b>用例 5：</b>
+        将当前文件夹下的 bag 文件合并为一个 bag 文件
+    </summary>
+
+```bash
+$ pip3 install rosbag-merge
+# 合并当前目录下的 bag 文件
+$ rosbag-merge --write_bag --outbag_name <包名>
+```
+
+</details>
+
 ## Tools
 
 |                  repository                  |    description    |
