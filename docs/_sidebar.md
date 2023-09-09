@@ -25,7 +25,8 @@
 
 - :hammer_and_wrench: Software and Tools
     - [Gazebo](Software%20and%20Tools/Gazebo.md)
-    - [RViz](Software%20and%20Tools/RViz.md)
+    - [PlotJuggler](Software%20and%20Tools/PlotJuggler.md)
+    - [RViz](Software%20and%20Tools/RViz.md) 
     - [Tools](Software%20and%20Tools/Tools.md)
 
 - :memo: Others

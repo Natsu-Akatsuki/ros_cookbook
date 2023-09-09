@@ -23,14 +23,3 @@
 ```
 
 </details>
-
-<details>
-    <summary>:wrench: <b>工具 4：</b>
-        <a href="https://github.com/facontidavide/PlotJuggler">PlotJuggler</a>
-    </summary>
-
-```bash
-$ sudo apt install ros-$ROS_DISTRO-plotjuggler-ros
-```
-
-</details>
