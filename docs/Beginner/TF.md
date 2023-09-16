@@ -317,13 +317,18 @@ def generate_launch_description():
 
 常用的 TF：
 
-|                                                          场景                                                          | TF 变换（角度） |              备注               |
-|:--------------------------------------------------------------------------------------------------------------------:|:---------:|:-----------------------------:|
-|                                                   LiDAR 系到相机系的基体变换                                                   | -90，0，-90 |               —               |
-| [LiDAR 系到 LOAM  系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch) |  90，0，90  | LeGO-LOAM 的 camera 指的是 LOAM 系 |
-| [LOAM 系到 LiDAR 系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch)  | -90，-90，0 | LeGO-LOAM 的 camera 指的是 LOAM 系 |
+|                             场景                             | TF 变换（角度） |                          基变换矩阵                          |                             备注                             |
+| :----------------------------------------------------------: | :-------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+|                  LiDAR 系到相机系的基体变换                  |   -90，0，-90   | $\begin{bmatrix} 0 & -1 & 0 \\ 0 & 0 & -1 \\ 1 & 0 & 0\end{bmatrix}$ | LiDAR_to_camera（to-> go to 动态，LiDAR（父/根系），camera（子系） |
+| [LiDAR 系到 LOAM  系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch) |    90，0，90    |                                                              |     LeGO-LOAM 的 camera 指的是 LOAM 系（x 左，y上，z前）     |
+| [LOAM 系到 LiDAR 系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch) |   -90，-90，0   |                                                              |              LeGO-LOAM 的 camera 指的是 LOAM 系              |
+|                 相机系到激光雷达系的基体变换                 |                 | $\begin{bmatrix} 0 & 0 & 1 \\ -1 & 0 & 0 \\ 0 & -1 & 0\end{bmatrix}$ |                              —                               |
 
 ![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20230727222925721.png ':size=100 LiDAR to LOAM（依然是右手系，保证 z 指向前）')
+
+> [!note] 如何快速计算基变换矩阵？
+>
+> 将旧基在新基下的列向量表征矩阵（基使用一维行向量）
 
 </details>
 
