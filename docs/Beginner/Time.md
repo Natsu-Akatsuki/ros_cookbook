@@ -1,34 +1,46 @@
 # Time
 
-> [!note]
+> [!attention]
 >
-> 留意因类型不同而导致的精度丢失
+> 应留意因类型不同而导致的精度丢失
 
-# Usage
+## Usage
 
-## Clock
+### Clock
 
 only for ROS 2
 
-|   —   |    ROS     |    ROS 2     |
+|  版本   |    ROS     |    ROS 2     |
 |:-----:|:----------:|:------------:|
 | 默认时钟源 | wall clock | system clock |
 
+<!-- tabs:start -->
+
+#### **默认时钟源**
+
 ```cpp
-// 使用不同的时钟源
 rclcpp::Clock ros_clock{RCL_ROS_TIME};
-rclcpp::Clock system_clock{RCL_SYSTEM_TIME};
-rclcpp::Clock steady_clock{RCL_STEADY_TIME};
-
-// 使用不同的时钟源
 rclcpp::Time ros_clock_stamp{0, 0, RCL_ROS_TIME};
-rclcpp::Time system_clock_stamp{0, 0, RCL_SYSTEM_TIME};
-rclcpp::Time steady_clock_stamp{0, 0, RCL_STEADY_TIME};
-
 RCLCPP_INFO(this->get_logger(), "[get_clock()->now()] sec:%lf nano:%ld", ros_clock_stamp.seconds());
+```
+
+#### **wall clock**
+
+```cpp
+rclcpp::Clock system_clock{RCL_SYSTEM_TIME};
+rclcpp::Time system_clock_stamp{0, 0, RCL_SYSTEM_TIME};
 RCLCPP_INFO(this->get_logger(), "[get_clock()->now()] sec:%lf nano:%ld", system_clock_stamp.seconds());
+```
+
+#### **system clock**
+
+```cpp
+rclcpp::Clock steady_clock{RCL_STEADY_TIME};
+rclcpp::Time steady_clock_stamp{0, 0, RCL_STEADY_TIME};
 RCLCPP_INFO(this->get_logger(), "[get_clock()->now()] sec:%lf nano:%ld", steady_clock_stamp.seconds());
 ```
+
+<!-- tabs:end -->
 
 ## Time
 
@@ -37,47 +49,76 @@ RCLCPP_INFO(this->get_logger(), "[get_clock()->now()] sec:%lf nano:%ld", steady_
         创建时间戳对象
     </summary>
 
-```cpp
-// 一、双形参，注意单位有所不同
-ROS C++：      Time(uint32_t _sec, uint32_t _nsec)
-ROS Python：   rospy.Time(secs=0, nsecs=1000000) # 仅支持整型
-ROS 2 C++：      Time(int32_t seconds, uint32_t nanoseconds, rcl_time_source_type_t clock=RCL_SYSTEM_TIME)
+<!-- tabs:start -->
 
-// 二、单一形参
+#### **C++ (ROS)**
+
+```cpp
+// >>> 双形参 >>>
+// uint32_t, uint32_t -> Time
+Time(uint32_t _sec, uint32_t _nsec)
+
+// >>> 单一形参 >>>
 // double -> Time
-ROS C++：      ros::Time(<data>) // double -> Time 等价于 fromSec
-ROS C++：      ros::Time().fromSec(<data>)
-// ROS 2 没有将双精度浮点型（以 s 为单位）的时间戳转换为 Time 对象的接口，可以先将其转换为 int64（以 ns 为单位）的时间戳
-// 但该接口会丢失精度    
-ROS 2 C++        rclcpp::Time t(static_cast<int64_t>(seconds * 1e9));
+ros::Time(<data>)
+ros::Time().fromSec(<data>)
 
 // uint64/int64_t -> Time
-ROS C++：      ros::Time()::fromNSec(<data>)
-ROS 2 C++：      Time(int64_t nanoseconds, rcl_time_source_type_t clock=RCL_SYSTEM_TIME)
+ros::Time().fromNSec(<data>)
 
-// 三、自建消息类型
-ROS 2 C++：      Time(const builtin_interfaces::msg::Time &time_msg)
-
-// 四、无参
-ROS C++：      ros::Time t = ros::Time::now();
-ROS Python：   t = rospy.Time.now()
-// Returns current time from the time source specified by clock_type. ROS 2 可显式指明时钟源
-ROS 2 C++：      rclcpp::Time t = now();
-ROS 2 C++：      rclcpp::Time t = this->now();
-ROS 2 C++：      rclcpp::Time t = this->get_clock()->now();
-ROS 2 C++：      rclcpp::Time t = rclcpp::Clock{RCL_ROS_TIME}.now();
-ROS 2 Python：   self.get_clock().now();
+// >>> 无参构造 >>>
+ros::Time t = ros::Time::now();
 ```
 
-> [!attention]
+#### **C++ (ROS 2)**
+
+> [!note]
 >
-> 需留意单位和形参类型
+> 双形参用法中：uint32_t (ROS) VS int32_t (ROS 2)
+
+ROS 2 没有将双精度浮点型（以 s 为单位）的时间戳转换为 Time 对象的接口，可以先将其转换为 int64（以 ns 为单位）的时间戳，但该接口会丢失精度
+
+```cpp
+// >>> 双形参 >>>
+// int32_t, unint32_t -> Time
+Time(int32_t seconds, uint32_t nanoseconds, rcl_time_source_type_t clock=RCL_SYSTEM_TIME)
+
+// >>> 单形参 >>>
+// int64_t -> Time 
+Time(int64_t nanoseconds, rcl_time_source_type_t clock=RCL_SYSTEM_TIME)
+rclcpp::Time t(static_cast<int64_t>(seconds * 1e9));
+
+// 自建消息类型 -> Time
+Time(const builtin_interfaces::msg::Time &time_msg)
+
+// >>> 无参构造 >>>
+rclcpp::Time t = now();
+rclcpp::Time t = this->now();
+rclcpp::Time t = this->get_clock()->now();
+// 显式指明时钟源
+rclcpp::Time t = rclcpp::Clock{RCL_ROS_TIME}.now();
+```
+
+#### **Python (ROS)**
+
+```python
+# 仅支持整型
+rospy.Time(secs=0, nsecs=1000000)
+```
+
+#### **Python (ROS 2)**
+
+```python
+self.get_clock().now();
+```
+
+<!-- tabs:end -->
 
 </details>
 
 <details>
     <summary>:wrench: <b>用例 2：</b>
-        Time 类型，内建消息类型，秒/纳秒的相互转换
+        Time 类型 <-> 内建消息类型 <-> 秒/纳秒
     </summary>
 
 <!-- tabs:start -->
@@ -90,16 +131,7 @@ double timestamp = msg->header.stamp.toSec();
 double timestamp = msg->header.stamp.sec + msg->header.stamp.nsec * 1e-9;
 
 // Time -> uint64_t（单位：ns）
-double timestamp = msg->header.stamp.toNSec();
-
-uint64_t
-```
-
-#### **ROS (Python)**
-
-```python
-# Time -> double（单位：second）
-timestamp = (msg.header.stamp).secs + (msg.header.stamp).nsecs * 1e-9;
+uint64_t timestamp = msg->header.stamp.toNSec();
 ```
 
 #### **ROS 2 (C++)**
@@ -117,6 +149,13 @@ msg.header.stamp = timestamp.to_msg()
 
 #### **ROS (Python)**
 
+```python
+# Time -> double（单位：second）
+timestamp = (msg.header.stamp).secs + (msg.header.stamp).nsecs * 1e-9;
+```
+
+#### **ROS 2 (Python)**
+
 ```cpp
 # Time 对象 -> 内建消息类型
 self.get_clock().now().to_msg();
@@ -133,59 +172,82 @@ self.get_clock().now().to_msg();
         Sleep
     </summary>
 
+<!-- tabs:start -->
+
+#### **C++ (ROS)**
+
 ```cpp
-// ROS C++
 ros::Duration(0.5 /*unit: sec*/).sleep();
+```
 
-// ROS Python
-rospy.sleep(0.5)
+#### **C++ (ROS 2)**
 
-// ROS 2 C++    
+```cpp
 rclcpp::sleep_for(std::chrono::milliseconds(500));
 ```
+
+#### **Python (ROS)**
+
+```python
+rospy.sleep(0.5)
+```
+
+<!-- tabs:end -->
 
 </details>
 
 <details>
     <summary>:wrench: <b>用例 2：</b>
-        浮点数 -> Duration
+        浮点数 <-> Duration
     </summary>
 
+<!-- tabs:start -->
+
+#### **C++ (ROS)**
+
 ```cpp
-// ROS C++
+// >>> 浮点数 -> Duration >>>
 ros::Duration t = ros::Duration(0.5 /*unit: sec*/);
+```
 
-// ROS Python
-rospy.Duration(0.02) # 0.02s
+#### **C++ (ROS 2)**
 
-// ROS 2 C++
+```cpp
+// >>> 浮点数 -> Duration >>>
 // Duration(int32_t seconds, uint32_t nanoseconds)
 rclcpp::Duration t = rclcpp::Duration(0, 0);
 rclcpp::Duration d = rclcpp::Duration::from_seconds(0.5) // 版本需大于 foxy
 
-// ROS 2 Python
-from rclpy.duration import Duration
-Duration(seconds=0).to_msg()
-```
-
-</details>
-
-<details>
-    <summary>:wrench: <b>用例 3：</b>
-        Duration -> second
-    </summary>
-
-```cpp
-// ROS 2 Duration 转换为浮点数
+// >>> Duration -> 浮点数 >>>
 double seconds = d.seconds();
 ```
 
+#### **Python (ROS)**
+
+```python
+rospy.Duration(0.02)  # 0.02s
+```
+
+#### **Python (ROS 2)**
+
+```python
+from rclpy.duration import Duration
+
+Duration(seconds=0).to_msg()
+```
+
+<!-- tabs:end -->
+
 </details>
 
 <details>
-    <summary>:wrench: <b>用例 4：</b>
-        （ROS 2）ROS 内建消息类型 / C 库消息类型->`Duration`
+    <summary>:wrench: <b>用例 2：</b>
+        内建消息类型 / C 库消息类型 -> Duration
     </summary>
+
+<!-- tabs:start -->
+
+#### **cpp (ROS2)**
 
 ```cpp
 // Duration(const builtin_interfaces::msg::Duration &duration_msg)
@@ -194,60 +256,61 @@ auto t = rclcpp::Duration(next_pt.time_from_start)
 auto t = rclcpp::Duration(time_ns /*rcutils_duration_value_t*/); 
 ```
 
+<!-- tabs:end -->
+
 </details>
 
 ## Rate and Timer
 
-推荐使用[Timer](http://wiki.ros.org/roscpp_tutorials/Tutorials/Timers)来实现特定频率的循环而不是使用[rate](http://wiki.ros.org/roscpp/Overview/Time)机制
+推荐使用 [Timer](http://wiki.ros.org/roscpp_tutorials/Tutorials/Timers) 来实现特定频率的循环而不是使用 [rate](http://wiki.ros.org/roscpp/Overview/Time) 机制
 
 ### Timer Callback
 
-`ROS 2`没有`rospy.Rate(5)`这种，只能通过定时器来实现 \
-
-`ROS 2`的回调函数无形参
-
 <!-- tabs:start -->
 
-#### **C++**
+#### **C++ (ROS)**
 
 ```cpp
-// >>> ROS 2 >>>
-timer_ = rclcpp::create_timer(this, get_clock(), period_ns, std::bind(&Node::run, this));
-
-using std::chrono_literals::operator ""ms;
-    timer_ = rclcpp::create_timer(
-        this, get_clock(), 100ms, std::bind(&Node::timerCallback, this));
-        
-// >>> ROS >>>
 // 定时器回调函数
-ros::Timer timer = nh.createTimer(ros::Duration(1.0 / publish_rate), &onTimer, this); // 类成员函数，方案一
-ros::Timer timer = nh.createTimer(ros::Duration(0.1), &Foo::callback, &foo_object); // // 类成员函数，方案二
+ros::Timer timer = nh.createTimer(ros::Duration(1.0 / publish_rate), &onTimer, this);
+// 类成员函数，方案一
+ros::Timer timer = nh.createTimer(ros::Duration(0.1), &Foo::callback, &foo_object); 
+// 类成员函数，方案二
 ros::Timer timer = nh.createTimer(ros::Duration(0.1), callback);
 
 // 对应的回调函数需含如下指定形参
 void onTimer(const ros::TimerEvent& e);
 ```
 
-#### **Python**
+#### **C++ (ROS 2)**
+
+`ROS 2` 的回调函数无形参
+
+```cpp
+timer_ = rclcpp::create_timer(this, get_clock(), period_ns, std::bind(&Node::run, this));
+
+using std::chrono_literals::operator ""ms;
+timer_ = rclcpp::create_timer(this, get_clock(), 100ms, std::bind(&Node::timerCallback, this));
+
+timer_period = 0.2  # 单位：秒
+self.timer = self.create_timer(timer_period, self.timer_callback)
+```
+
+#### **Python (ROS)**
 
 ```python
+import rospy
 
-# >>> ROS >>>
 rospy.Timer(rospy.Duration(2), on_timer)  # 单位：秒
 
 
 def on_timer(self, event):
     pass
-
-
-# >>> ROS 2 >>>
-timer_period = 0.2  # 单位：秒
-self.timer = self.create_timer(timer_period, self.timer_callback)
-
-
-def timer_callback(self):
-    pass
 ```
+
+#### **Python (ROS 2)**
+
+`ROS 2` 没有`rospy.Rate(5)`，只能通过定时器来实现
 
 <!-- tabs:end -->
 
@@ -270,12 +333,12 @@ def timer_callback(self):
 设置参数：`/use_sim_time=true`
 
 ```bash
-$ rosparam set /use_sim_time true
+(ROS) $ rosparam set /use_sim_time true
 ```
 
 </details>
 
-# FAQ
+## FAQ
 
 <details>
     <summary>:question: <b>问题 1：</b>
