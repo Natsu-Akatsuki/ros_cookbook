@@ -17,12 +17,15 @@ No OpenGL Support for nvidia render，于容器中检查一下命令行 `nvidia-
 
 <details>
     <summary>:wrench: <b>用例 2：</b>
-        自建的 Noetic 容器无法正常使用 nvidia 渲染，红框处无法正常调节
+        Noetic 容器无法使用 N卡 或者 I卡 渲染，具体参考 <a herf="https://github.com/ros-visualization/rviz/issues/1780">Here</a>
     </summary>
 
-![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20220329145821156.png ':size=800')
-
-具体原因未知，可以把框拖出来进行数据修改
+```bash
+$ sudo add-apt-repository ppa:beineri/opt-qt-5.12.10-focal
+$ sudo apt update
+$ sudo apt install qt512charts-no-lgpl qt512svg qt512xmlpatterns qt512tools qt512translations    qt512graphicaleffects qt512quickcontrols2 qt512wayland qt512websockets qt512serialbus qt512serialport qt512location qt512imageformats qt512script qt512scxml qt512gamepad qt5123d 
+$ source /opt/qt512/bin/qt512-env.sh
+```
 
 </details>
 
