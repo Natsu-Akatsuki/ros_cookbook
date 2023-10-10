@@ -9,31 +9,38 @@
 
 ```bash
 # >>> 回放 >>>
-(ROS1) $ rosbag play <包名>
-(ROS2) $ ros2 bag play <包目录>
+(ROS) $ rosbag play <包名>
+(ROS 2) $ ros2 bag play <包目录>
 
 # >>> 只发布特定主题的消息 >>
-(ROS1) $ rosbag play school.bag --topic /rslidar_points
+(ROS) $ rosbag play school.bag --topics /rslidar_points
 
 # >>> 主题重映射 >>>
-(ROS1) $ rosbag play school.bag /rslidar_points:=/velodyne_points
-(ROS2) $ ros2 bag play school --remap /rslidar_points:=/velodyne_points
+(ROS) $ rosbag play school.bag /rslidar_points:=/velodyne_points
+(ROS 2) $ ros2 bag play school --remap /rslidar_points:=/velodyne_points
+
+# 只发布特定主题的消息 + 主题重映射 
+(ROS) $ rosbag play school.bag --topics /rslidar_points /rslidar_points:=/velodyne_points
+(ROS) $ rosbag play flash_light.bag --topics /camera_1/image_raw /imu/data /camera_1/image_raw:=/rgb/image
 
 # >>> 指定位置播放 >>>
-(ROS1) $ rosbag play <包名> -s 50
-(ROS2) $ ros2 bag play <包名> --start-offset 100
+(ROS) $ rosbag play <包名> -s 50
+(ROS 2) $ ros2 bag play <包名> --start-offset 100
 
 # >>> 录制 >>>
-(ROS1) $ rosbag record <主题名>
+(ROS) $ rosbag record <主题名>
 # ROS2 导出的是一个文件夹
-(ROS2) $ ros2 bag record -a
+(ROS 2) $ ros2 bag record -a
 
 # >>> 裁剪 >>>
 # 这种时刻指的是 ROS 时间戳，类似 1576119471.511449 
-(ROS1) $ rosbag filter <输入包名> <输出包名> "t.to_sec() < 某个时刻 and t.to_sec() > 某个时刻"
+(ROS) $ rosbag filter <输入包名> <输出包名> "t.to_sec() < 某个时刻 and t.to_sec() > 某个时刻"
 
 # >>> 压缩和解压 >>>
-(ROS1) $ rosbag compress/decompress <待压缩的包名>
+(ROS) $ rosbag compress/decompress <待压缩的包名>
+
+# >>> 只播放特定一段时间的数据 >>>
+(ROS) $ rosbag play -u <秒>
 ```
 
 </details>
@@ -67,30 +74,33 @@ $ rosbags-convert <ROS2包名> --dst <ROS1导出路径>
 
 > [!attention]
 >
-> 注意`read_message`读取的时间戳是`rosbag`获取信息时候的时间戳，而不是传感器发布数据时的时间戳
+> 注意 `read_message` 读取的时间戳是 `rosbag` 获取信息时候的时间戳，而不是传感器发布数据时的时间戳
 
 ```python
 import rosbag
 from tqdm import tqdm
 
 
-class Converter:
+class BagReader:
     def __init__(self):
         pass
 
-    def write(self):
-        output_bag = rosbag.Bag( < 包名 >, 'w')
-        input_bag = rosbag.Bag( < 包名 >, 'r')
+    def run(self):
+        intput_file = "包名"
+        output_file = "包名"
+        input_bag = rosbag.Bag(intput_file, 'r')
+        output_bag = rosbag.Bag(output_file, 'w')
 
         for topic, msg, t in tqdm(input_bag.read_messages(), total=input_bag.get_message_count()):
-            output_bag.write( < 主题名 >, < 主题数据 >, t)
+            output_bag.write("主题名", "主题数据", t)
 
-            input_bag.close()
-            output_bag.close()
+        input_bag.close()
+        output_bag.close()
 
-    if __name__ == '__main__':
-        converter = Converter()
-        converter.write()
+
+if __name__ == '__main__':
+    bag_reader = BagReader()
+    bag_reader.run()
 ```
 
 </details>
