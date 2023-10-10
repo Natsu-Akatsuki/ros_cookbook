@@ -140,8 +140,24 @@ my_subscription = this->create_subscription<Int32>("/topic", rclcpp::SensorDataQ
 
 </details>
 
+<details>
+    <summary>:question: <b>问题 8：</b>
+        为什么即便将队列大小设置得很大或者无限制，当没有及时处理回调数据时，依然会存在丢失数据的情况？
+    </summary>
+
+待了解，部分参考资料：
+
+- https://github.com/ros/ros_comm/issues/536
+- https://github.com/lmb-freiburg/rgbd-pose3d/issues/5
+- https://github.com/ros/ros_comm/issues/2213
+- https://github.com/chicagoedt/revo_robot/commit/34fc91a8662ef2f833af6865df0894d2b122917b
+
+</details>
+
 ## Reference
 
 - [精讲多线程之 MultiThreadedSpinner](https://zhuanlan.zhihu.com/p/375418691)
 - [ROS Spinning, Threading, Queuing](https://levelup.gitconnected.com/ros-spinning-threading-queuing-aac9c0a793f)
 - ROSCON: [concurrency (2019)](https://roscon.ros.org/2019/talks/roscon2019_concurrency.pdf)
+
+
