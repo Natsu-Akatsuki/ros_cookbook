@@ -57,7 +57,7 @@
 </details>
 
 <details>
-    <summary>:wrench: <b>用例 2：</b>
+    <summary>:wrench: <b>用例 3：</b>
         监听特定的 TF（源程序）
     </summary>
 
@@ -170,7 +170,7 @@ def transfrom_box3d_frame(self, box3d_src, target_frame, src_frame, ):
 </details>
 
 <details>
-    <summary>:wrench: <b>用例 3：</b>
+    <summary>:wrench: <b>用例 4：</b>
         监听 TF 
     </summary>
 
@@ -319,10 +319,10 @@ def generate_launch_description():
 
 |                             场景                             | TF 变换（角度） |                          基变换矩阵                          |                             备注                             |
 | :----------------------------------------------------------: | :-------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-|                  LiDAR 系到相机系的基体变换                  |   -90，0，-90   | $\begin{bmatrix} 0 & -1 & 0 \\ 0 & 0 & -1 \\ 1 & 0 & 0\end{bmatrix}$ | LiDAR_to_camera（to-> go to 动态，LiDAR（父/根系），camera（子系） |
-| [LiDAR 系到 LOAM  系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch) |    90，0，90    |                                                              |     LeGO-LOAM 的 camera 指的是 LOAM 系（x 左，y上，z前）     |
+|                  LiDAR 系到相机系的基体变换                  |   -90，0，-90   | $\begin{bmatrix} 0 & 0 & 1 \\ -1 & 0 & 0 \\ 0 & -1 & 0\end{bmatrix}$ | LiDAR_to_camera（to-> go to 动态，LiDAR（父/根系），camera（子系） |
+| [LiDAR 系到 LOAM  系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch) |    90，0，90    |                                                              |    LeGO-LOAM 的 camera 指的是 LOAM 系（x 左，y 上，z 前）    |
 | [LOAM 系到 LiDAR 系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch) |   -90，-90，0   |                                                              |              LeGO-LOAM 的 camera 指的是 LOAM 系              |
-|                 相机系到激光雷达系的基体变换                 |                 | $\begin{bmatrix} 0 & 0 & 1 \\ -1 & 0 & 0 \\ 0 & -1 & 0\end{bmatrix}$ |                              —                               |
+|                 相机系到激光雷达系的基体变换                 |                 |                                                              |                              —                               |
 
 ![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20230727222925721.png ':size=100 LiDAR to LOAM（依然是右手系，保证 z 指向前）')
 
@@ -439,4 +439,3 @@ with np.printoptions(precision=2, suppress=True):
 - ROS2 API Document: [TF2_ROS](https://docs.ros2.org/latest/api/tf2_ros/), [TF2](https://docs.ros2.org/latest/api/tf2/)
 - [Blog: Transforms in ROS](https://nu-msr.github.io/me495_site/lecture05_tf.html)
 - [ROS TF, Whoever wrote the Python API, F**ked up the concepts](https://www.hepeng.me/ros-tf-whoever-wrote-the-python-tf-api-f-ked-up-the-concept/)
-
