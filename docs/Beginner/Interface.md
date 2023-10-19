@@ -159,8 +159,6 @@ self.sub = rospy.Subscriber(<主题名>, <主题类型>, <回调函数>, queue_s
 ```
 [//]: # (@formatter:on)
 
-<!-- tabs:end -->
-
 #### **ROS2(Python)**
 
 > [!attention]
@@ -183,6 +181,8 @@ self.pub = self.create_publisher(<主题类型>, <主题名>, qos_profile=<profi
 self.sub = self.create_subscription(<主题类型>, <主题名>, <回调函数>, <队列长度>)
 ```
 [//]: # (@formatter:on)
+
+<!-- tabs:end -->
 
 </details>
 
@@ -225,6 +225,9 @@ $ rostopic pub -s --use-rostime -r 4 /clicked_point geometry_msgs/PointStamped "
      x: 0.0
      y: 0.0
      z: 0.0"
+     
+# 从 Humble 开始     
+(ROS 2) $ ros2 topic pub -r 10 <主题名> <主题类型> "{'header': {'stamp': 'now'}}"
 ```
 
 #### **ROS2**

@@ -142,10 +142,170 @@ my_subscription = this->create_subscription<Int32>("/topic", rclcpp::SensorDataQ
 
 <details>
     <summary>:question: <b>问题 8：</b>
-        为什么即便将队列大小设置得很大或者无限制，当没有及时处理回调数据时，依然会存在丢失数据的情况？
+        如何解决 ROS1 中 rosbag play 的数据丢包的问题？
     </summary>
 
-待了解，部分参考资料：
+方案一：降低数据发布的频率，以适配订阅端回调函数处理数据的速度 \
+方案二：在 ROS 1 中，将订阅器的 queue_size 设得足够大；rosbag play 播放时添加选项 --queue <一个足够大的数>；当 rosbag 准备播放完时，按空格键暂停，避免 rosbag 发布器中的数据停止发布。相关原理猜想为，在 ROS 的设计中，发布器要等自己的数据被订阅器处理（包括回调调用或者因为队列的维护而丢弃）了才发下一个数据。而待发的数据也会放到发布队列中，如果发布队列的数据超出上限时则丢掉最旧的数据。
+
+测试代码：
+
+<!-- tabs:start -->
+
+#### **subscriber**
+
+```python
+import time
+
+try:
+    import rclpy
+    from rclpy.node import Node
+    from rclpy.qos import QoSDurabilityPolicy, QoSProfile, qos_profile_sensor_data
+
+    __ROS_VERSION__ = 2
+except ImportError:
+    try:
+        import rospy
+
+        __ROS_VERSION__ = 1
+
+
+        class Node:
+            def __init__(self, node_name):
+                rospy.init_node(node_name)
+    except ImportError:
+        raise ImportError("Please install ROS2 or ROS1")
+
+from geometry_msgs.msg import PoseStamped
+from sensor_msgs.msg import Image
+
+
+class MyNode(Node):
+
+    def __init__(self):
+        super().__init__("test_subscriber")
+
+        if __ROS_VERSION__ == 1:
+            self.sub = rospy.Subscriber("/test", PoseStamped, self.test_callback, queue_size=10000)
+        elif __ROS_VERSION__ == 2:
+            self.sub = self.create_subscription(PoseStamped, "/test", self.test_callback, 10000)
+
+    def test_callback(self, msg):
+        time.sleep(1)
+
+        if __ROS_VERSION__ == 1:
+            rospy.loginfo(f'Subscribe: {msg.header.stamp.secs} {msg.header.stamp.nsecs}')
+        elif __ROS_VERSION__ == 2:
+            self.get_logger().info(f'Subscribe: {msg.header.stamp}')
+
+
+def ros1_wrapper():
+    """Wrapper function for ROS1."""
+    MyNode()
+    rospy.spin()
+
+
+def ros2_wrapper():
+    """Wrapper function for ROS2."""
+    rclpy.init()
+    node = MyNode()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == "__main__":
+    if __ROS_VERSION__ == 1:
+        ros1_wrapper()
+    elif __ROS_VERSION__ == 2:
+        ros2_wrapper()
+
+```
+
+#### **publisher**
+
+```python
+import time
+
+import cv2
+import numpy as np
+from tqdm import tqdm
+
+try:
+    import rclpy
+    from rclpy.node import Node
+    from rclpy.qos import (QoSDurabilityPolicy, QoSProfile,
+                           qos_profile_sensor_data)
+
+    __ROS_VERSION__ = 2
+except ImportError:
+    try:
+        import rospy
+
+        __ROS_VERSION__ = 1
+
+
+        class Node:
+            def __init__(self, node_name):
+                rospy.init_node(node_name)
+    except ImportError:
+        raise ImportError("Please install ROS2 or ROS1")
+
+from geometry_msgs.msg import PoseStamped
+
+
+class MyNode(Node):
+    def __init__(self):
+        super().__init__('test_publisher')
+
+        if __ROS_VERSION__ == 1:
+            self.pub = rospy.Publisher("/test", PoseStamped, queue_size=10000)
+        elif __ROS_VERSION__ == 2:
+            self.pub = self.create_publisher(PoseStamped, 'test', 10000)
+
+        self.process()
+
+    def process(self):
+        for i in range(0, 15000):
+            msg = PoseStamped()
+            if __ROS_VERSION__ == 1:
+                msg.header.stamp = rospy.Time.now()
+                rospy.loginfo(f'Publish: {msg.header.stamp.secs} {msg.header.stamp.nsecs}')
+            elif __ROS_VERSION__ == 2:
+                msg.header.stamp = self.get_clock().now().to_msg()
+                self.get_logger().info(f'Publish: {msg.header.stamp}')
+
+            self.pub.publish(msg)
+            time.sleep(0.1)
+
+
+def ros1_wrapper():
+    """Wrapper function for ROS1."""
+    MyNode()
+    rospy.spin()
+
+
+def ros2_wrapper():
+    """Wrapper function for ROS2."""
+    rclpy.init()
+    node = MyNode()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == "__main__":
+    if __ROS_VERSION__ == 1:
+        ros1_wrapper()
+    elif __ROS_VERSION__ == 2:
+        ros2_wrapper()
+```
+
+<!-- tabs:end -->
+
+另实测，ROS2 rclpy 不存在发布器 stop 后数据不发布的问题
+
+需根据如下参考资料，进一步补充：
 
 - https://github.com/ros/ros_comm/issues/536
 - https://github.com/lmb-freiburg/rgbd-pose3d/issues/5
