@@ -378,7 +378,11 @@ $ __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia gazebo
         Gazebo 启动后黑屏，加载时间过长
     </summary>
 
-检查 `.world` 文件是否有不存在的资源
+检查 `.world` 文件是否有不存在的资源。其中，基础模型可以在 GitHub 下下载如：
+
+```bash
+$ git clone https://github.com/osrf/gazebo_models.git --depth=1 ~/.gazebo/models
+```
 
 </details>
 
