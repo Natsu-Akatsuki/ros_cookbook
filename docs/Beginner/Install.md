@@ -13,20 +13,24 @@
 
 #### **:star:apt**
 
-1）步骤 1：安装
+步骤 1：安装
 
 ```bash
 $ sudo apt update && sudo apt install curl gnupg lsb-release
 $ sudo apt upgrade
 $ sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
-$ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null$ sudo apt update
+
+# URL 可改为：https://mirrors.tuna.tsinghua.edu.cn/ros2/ubuntu
+$ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+$ sudo apt update
 $ sudo apt install ros-humble-desktop
 
 # 添加环境变量到~/.bashrc
 $ echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 ```
 
-2）步骤 2：验证是否安装成功。
+步骤 2：验证是否安装成功。
 
 ```bash
 $ ros2 run demo_nodes_cpp talker
@@ -96,10 +100,18 @@ $ echo "source ~/ros2_humble/install/local_setup.bash" >> ~/.bashrc
 `rosdep`相关于`apt`的拓展包，用于下载依赖包。
 
 ```bash
+# >>> 方案一 >>>
 # 初始化安装源
 $ sudo rosdep init
-
 # 更新源
+$ rosdep update
+
+# >>> 方案二 >>>
+# 手动模拟 rosdep init
+$ sudo mkdir -p /etc/ros/rosdep/sources.list.d/
+$ sudo curl -o /etc/ros/rosdep/sources.list.d/20-default.list https://mirrors.tuna.tsinghua.edu.cn/github-raw/ros/rosdistro/master/rosdep/sources.list.d/20-default.list
+$ echo 'export ROSDISTRO_INDEX_URL=https://mirrors.tuna.tsinghua.edu.cn/rosdistro/index-v4.yaml' >> ~/.bashrc
+$ source ~/.bashrc
 $ rosdep update
 
 $ rosdep install --from-paths src --ignore-src -r -y
