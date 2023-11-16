@@ -34,6 +34,8 @@
 - [Deployment](Intermediate/Deployment.md)
 - [Assertion and Exception](Intermediate/Assertion%20and%20Exception.md)
 - [Plugins](Intermediate/Plugins.md)
+- [Signal](Intermediate/Signal.md): How to terminate a multi-thread process
+
 
 ### :hammer_and_wrench: Software and Tools
 
