@@ -22,6 +22,7 @@
     - [DDS](Intermediate/DDS.md)
     - [Deployment](Intermediate/Deployment.md)
     - [Plugins](Intermediate/Plugins.md)
+    - [Profiler](Intermediate/Profiler.md)
     - [Signal](Intermediate/Signal.md)
 
 - :hammer_and_wrench: Software and Tools
