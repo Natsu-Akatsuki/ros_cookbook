@@ -2,6 +2,8 @@
 
 ## Memory
 
+### Usage
+
 <details>
     <summary>:wrench: <b>用例 1：</b>
         程序级监控节点进程使用的物理内存，通过主题的方式发布数据，PlotJuggler 可视化数据
@@ -97,7 +99,36 @@ namespace ros_debug {
 
 </details>
 
+<details>
+    <summary>:wrench: <b>用例 2：</b>
+        使用 AddressSanitizer 分析内存泄露（Heap-use-after-free）（多线程、共享变量）
+    </summary>
 
+步骤 1：配置 `CMakeLists.txt`
 
+```cmake
+add_compile_options(-std=c++14)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -rdynamic -fsanitize=address")
+set(CMAKE_BUILD_TYPE "DEBUG")
+```
 
+步骤 2：根据 AddressSanitizer 提供的日志和相关调用栈（用于定位是哪个共享变量），可发现是有关多线程的问题，T1647 线程访问了 T6 现成已经析构的内存
 
+```bash
+# READ of size 8 at 0x7fcba0501878 thread T1647
+# freed by thread T6 here                                    
+# previously allocated by thread T6 here
+```
+
+具体情况如下图所示：B 线程执行的时候，相应的内存空间被 A 线程析构了一部分（原本有 1000 个元素大小的空间，现在只有 800 个元素大小的空间），以致 B 线程在访问第 1000 个元素时出现问题。
+
+![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20231117212537894.png)
+
+解决方案 1：线程 A 和 线程 B 不使用该共享变量
+
+</details>
+
+## Roadmap
+
+- 根据 [AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer) 官方文档补充笔记
