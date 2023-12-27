@@ -41,6 +41,9 @@
 
 # >>> 只播放特定一段时间的数据 >>>
 (ROS) $ rosbag play -u <秒>
+
+# >>> 等待所有主题都有订阅器订阅器时才发布数据 >>>
+(ROS) $ rosbag play <包名> --wait-for-subscribers
 ```
 
 </details>
@@ -148,6 +151,17 @@ $ pip3 install rosbag-merge
 # 合并当前目录下的 bag 文件
 $ rosbag-merge --write_bag --outbag_name <包名>
 ```
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 6：</b>
+        解决 ROS1 中 rosbag 开头丢包的问题
+    </summary>
+
+[由于播包开始时订阅器和发布器尚未构成通路，则 rosbag 发的数据或会丢失](https://robotics.stackexchange.com/questions/83136/data-loss-between-publisher-and-subscriber)
+
+可以在 rosbag play 时使用 `--wait-for-subscribers` 选项，等订阅器和发布器通路搭好了才发布数据（关于“通路具体指什么”，暂未知）
 
 </details>
 
