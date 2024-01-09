@@ -17,7 +17,7 @@ No OpenGL Support for nvidia render，于容器中检查一下命令行 `nvidia-
 
 <details>
     <summary>:wrench: <b>用例 2：</b>
-        Noetic 容器无法使用 N卡 或者 I卡 渲染，具体参考 <a herf="https://github.com/ros-visualization/rviz/issues/1780">Here</a>
+        Noetic 容器下渲染 RViz会有很强的撕裂效果，具体参考 <a herf="https://github.com/ros-visualization/rviz/issues/1780">Here</a>
     </summary>
 
 ```bash
@@ -499,18 +499,29 @@ RCLCPP_INFO(rclcpp::get_logger("rviz"), "clicked: (%d, %d)", event.x, event.y);
     </summary>
 </details>
 
-# Supplementary Materials
+---
 
-## Plugins
+# Shortcut
+
+| 快捷键 |        功能        |
+|:---:|:----------------:|
+|  m  |   Move Camera    |
+|  s  |      Select      |
+|  g  |   2D Nav Goal    |
+|  p  | 2D Pose Estimate |
+|  c  |  Publish Point   |
+
+
+# Plugins
 
 |                                                            插件                                                             |           备注            |
 |:-------------------------------------------------------------------------------------------------------------------------:|:-----------------------:|
 |                           [jsk_visualization](https://github.com/jsk-ros-pkg/jsk_visualization)                           |     目前只提供了 ROS1 版本      |
 |                      [vision_msgs_rviz_plugins](https://github.com/NovoG93/vision_msgs_rviz_plugins)                      |     目前只提供了 ROS2 版本      |
-|           **[pointcloud2_normal_rviz_plugin](https://github.com/UCR-Robotics/pointcloud2_normal_rviz_plugin)**            | 目前只提供了 ROS1 版本，用于可视化法向量 |
+|             [pointcloud2_normal_rviz_plugin](https://github.com/UCR-Robotics/pointcloud2_normal_rviz_plugin)              | 目前只提供了 ROS1 版本，用于可视化法向量 |
 |                               [miv_rviz_panel](https://github.com/quantumxt/miv_rviz_panel)                               |  用于在一个 Display 中显示多张图片  |
 | [plugin_lecture](https://github.com/project-srs/ros_lecture/tree/014c2e409c8eed7a17300cb73407c77379cbfba1/plugin_lecture) |    包含了 overlay 显示等插件    |
 
-## Others
+# Reference
 
-- [RViz plugin tutorials ](https://github.com/ros-visualization/visualization_tutorials/tree/noetic-devel/rviz_plugin_tutorials)
+- [RViz plugin tutorials ](https://github.com/ros-visualization/visualization_tutorials/tree/noetic-devel/rviz_plugin_tutorials) 
