@@ -34,7 +34,7 @@ $ source /opt/qt512/bin/qt512-env.sh
         在容器中出现：qt.qpa.xcb: could not connect to display. qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found. This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem. Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, vnc, wayland-egl, wayland, wayland-xcomposite-egl, wayland-xcomposite-glx, xcb.
     </summary>
 
-检查 `DISPLAY` 环境变量是否设置正确
+检查 `DISPLAY` 环境变量是否设置正确（此处的 could not connect to to display 是没有 :0 这些信息的）
 
 </details>
 

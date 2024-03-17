@@ -25,9 +25,9 @@ $ wget -c https://github.com/osrf/gazebo_models/archive/refs/heads/master.zip
 |     ROS version     | Gazebo version |
 |:-------------------:|:--------------:|
 | Ubuntu18.04 Melodic |   Gazebo 9.x   |
-| Ubuntu20.04 Noetic  |  Gazebo 11.x   |
+| Ubuntu20.04 Noetic  | Gazebo 11.11.0 |
 |        Foxy         |  Gazebo 11.x   |
-| Ubuntu22.04 Rolling |  Gazebo 11.x   |
+| Ubuntu22.04 Rolling | Gazebo 11.10.2 |
 
 #### **[Garden](https://gazebosim.org/docs/garden/install_ubuntu)**
 
@@ -66,21 +66,25 @@ $ export GAZEBO_MODEL_PATH=<模型位置>
 
 ### File
 
-|                    文件格式                    |        编辑或可视化工具         |                备注                 |
-|:------------------------------------------:|:-----------------------:|:---------------------------------:|
-|                    URDF                    | rviz, vscode, foxyglove |             用于表示单个模型              |
-| [xacro](https://github.com/ros/xacro/wiki) |     rviz, foxyglove     |       用于表示模型，使用时需要转换为URDF格式       |
-|                    .stl                    |         Open3D          |          STL 文件（只含单一颜色）           |
-|                    .dae                    |         Blender         |        Collada 文件（含纹理，颜色）         |
-|               .sdf / .world                |         gazebo          | 用于描述多个模型（插件、传感器文件）+ 表示世界；不适用于 ROS |
+|                    文件格式                    |        编辑或可视化工具         |                   备注                    |
+|:------------------------------------------:|:-----------------------:|:---------------------------------------:|
+|                    URDF                    | rviz, vscode, foxyglove |                用于表示单个模型                 |
+| [xacro](https://github.com/ros/xacro/wiki) |     rviz, foxyglove     |          用于表示模型，使用时需要转换为URDF格式          |
+|                    .stl                    |         Open3D          |             STL 文件（只含单一颜色）              |
+|                    .dae                    |         Blender         |           Collada 文件（含纹理，颜色）            |
+|               .sdf / .world                |         gazebo          | 用于描述多个模型（插件、传感器文件）+ 表示世界；不适用于 ROS<br /> |
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
         <a href="https://classic.gazebosim.org/tutorials?tut=ros_roslaunch&cat=connect_ros">用 Gazebo 打开 .world 文件（即 sdf 格式的文件）</a>（CLI）
     </summary>
+SDF（Simulation Description Format），专属于 Gazebo 的格式，相关标签信息可参考 [Here](http://sdformat.org/spec?ver=1.11&elem=link)
 
 ```bash
+
 (ROS) $ gazebo <.world>
+# -u: 以暂停模式打开
+
 (ROS1) $ roslaunch gazebo_ros empty_world.launch
 ```
 
@@ -196,6 +200,16 @@ Edit | Building Editor（或 CTRL+B）
 
 </details>
 
+<details>
+    <summary>:wrench: <b>用例 7：</b>
+        <a href="https://github.com/ros-simulation/gazebo_ros_pkgs/blob/noetic-devel/gazebo_plugins/src/gazebo_ros_diff_drive.cpp
+">搭建差速模型插件</a>
+    </summary>
+
+TODO
+
+</details>
+
 ### Visualization
 
 <details>
@@ -293,24 +307,6 @@ $ sudo dpkg -i foxglove-studio-1.39.0-linux-amd64.deb
 
 </details>
 
-### Others
-
-<details>
-    <summary>:wrench: <b>用例 1：</b>
-        常用命令行
-    </summary>
-
-```bash
-# 追加模型，启动后含格式检测
-# 启动含服务的gazebo
-(ROS1) $ rosrun gazebo_ros gazebo
-(ROS1) $ rosrun gazebo_ros spawn_model -file <文件名> -sdf -model <模型名> -y 1
-
-# 启动含服务的gazebo
-(ROS2) $ gazebo --verbose -s libgazebo_ros_factory.so
-(ROS2) $ ros2 run gazebo_ros spawn_entity.py -file <文件名> -entity <模型名> -topic /robot_description
-```
-
 ### Plugins
 
 具体参考 [Here](http://classic.gazebosim.org/tutorials?tut=ros_gzplugins&cat=connect_ros)
@@ -333,6 +329,11 @@ $ sudo dpkg -i foxglove-studio-1.39.0-linux-amd64.deb
 
 ### Shortcut
 
+<details>
+    <summary>:wrench: <b>用例 1：</b>
+        快捷鍵
+    </summary>
+
 具体参考 [Here](http://classic.gazebosim.org/hotkeys)
 
 |  快捷键   |       作用       |
@@ -351,6 +352,63 @@ $ sudo dpkg -i foxglove-studio-1.39.0-linux-amd64.deb
 ```bash
 $ __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia gazebo
 ```
+
+</details>
+
+### Others
+
+<details>
+    <summary>:wrench: <b>用例 1：</b>
+        常用命令行
+    </summary>
+
+```bash
+# 追加模型，启动后含格式检测
+# 启动含服务的gazebo
+(ROS1) $ rosrun gazebo_ros gazebo
+(ROS1) $ rosrun gazebo_ros spawn_model -file <文件名> -sdf -model <模型名> -y 1
+
+# 启动含服务的gazebo
+(ROS2) $ gazebo --verbose -s libgazebo_ros_factory.so
+(ROS2) $ ros2 run gazebo_ros spawn_entity.py -file <文件名> -entity <模型名> -topic /robot_description
+```
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 2：</b>
+        ROS 主题和服务
+    </summary>
+
+| 服务名                   | 服务类型             | 作用                                                         |
+| ------------------------ | -------------------- | ------------------------------------------------------------ |
+| /gazebo/pause_physics    | std_srvs/Empty       | 暂停物理引擎的更新（物理运动如物体移动）会暂停，仿真时间也会停止。特别适合需要在静止环境中进行观察。 |
+| /gazebo/unpause_physics  | std_srvs/Empty       | 恢复物理引擎的更新                                           |
+| /gazebo/reset_simulation | std_srvs/Empty       | 重置模型的位置、状态、仿真时间）                             |
+| /gazebo/reset_world      | std_srvs/Empty       | 重置模型的位置和状态，但不会重置仿真时间                     |
+| /gazebo/set_model_state  | gazebo/SetModelState | [重置模型的位置](https://answers.gazebosim.org//question/22125/how-to-set-a-models-position-using-gazeboset_model_state-service-in-python/) |
+
+| 主题名                  | 主题类型               | 作用                                                         |
+| ----------------------- | ---------------------- | ------------------------------------------------------------ |
+| /gazebo/set_model_state | gazebo_msgs/ModelState | [重置模型的位置](http://classic.gazebosim.org/tutorials?tut=ros_comm&cat=connect_ros) |
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 3：</b>
+        搭建虚拟展厅
+    </summary>
+
+![](_asset%2Frobot_sim_demo.gif '虚拟展厅（中科院）')
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 4：</b>
+        <a href="https://blog.csdn.net/Eric_Pxz/article/details/125412242">将 world 文件转换为栅格地图（高程图）</a>
+    </summary>
+
+TODO
 
 </details>
 
@@ -395,10 +453,6 @@ $ git clone https://github.com/osrf/gazebo_models.git --depth=1 ~/.gazebo/models
 
 </details>
 
-## Roadmap
-
-- [ ] 了解中科院的 Gazebo 环境是如何搭建的
-
 ## Reference
 
 - Official Document for [Gazebo Sim](https://gazebosim.org/home) and [Gazebo-classic](https://classic.gazebosim.org/)
@@ -407,3 +461,6 @@ $ git clone https://github.com/osrf/gazebo_models.git --depth=1 ~/.gazebo/models
 - [Gazebo API](https://github.com/gazebosim/gazebo-classic/blob/gazebo11/Migration.md)
 - [Ignition API](https://osrf-distributions.s3.amazonaws.com/ign-math/api/1.0.0/namespaceignition.html)
 - [Gazebo-classic -> Gazebo Sim SDF](https://gazebosim.org/api/gazebo/4.3/migrationsdf.html)
+
+[惯性的作用](https://www.youtube.com/watch?v=sHzC--X0zQE) 
+
