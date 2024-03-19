@@ -217,6 +217,21 @@ TODO
 
 </details>
 
+<details>
+    <summary>:wrench: <b>用例 8：</b>
+        <a href="https://classic.gazebosim.org/tutorials?tut=build_model">构建基础模型</a>
+    </summary>
+
+文件的配置具体参考 [Here](https://classic.gazebosim.org/tutorials?tut=model_structure)
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 9：</b>
+        <a href="https://classic.gazebosim.org/tutorials?tut=color_model">使用 Orge Material Script 进行贴图</a>
+    </summary>
+</details>
+
 ### Visualization
 
 <details>

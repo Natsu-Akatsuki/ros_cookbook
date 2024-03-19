@@ -1,0 +1,139 @@
+```bash
+$ sudo apt install google-perftools libgoogle-perftools-dev google-perftools
+```
+
+```cpp
+#include <ros/ros.h>
+#include <gperftools/profiler.h>
+
+void callbackFunction(const sensor_msgs::ImageConstPtr& msg) {
+    // 这里是你的回调函数的代码
+}
+
+int main(int argc, char **argv) {
+    ros::init(argc, argv, "my_ros_node");
+    ros::NodeHandle nh;
+
+    ProfilerStart("my_ros_node.prof"); // 启动性能分析器
+
+    ros::Subscriber sub = nh.subscribe("topic_name", 1000, callbackFunction);
+
+    ros::spin();
+
+    ProfilerStop(); // 停止性能分析器
+    return 0;
+}
+
+
+```
+
+```bash
+ # Outputs one line per procedure
+ $ google-pprof --text /bin/ls <生成的 prof 名>
+# 采样次数 所占采样次数的百分比 累计百分比					 函数名
+#	500  		42.1%  		42.1%      500  42.1% clock_nanosleep
+```
+
+- 具体参考 [Here](https://www.youtube.com/watch?v=7amZwTCFjYA)
+
+```bash
+$ google-pprof --text <二进制程序> <生成的 prof 名>
+(pprof) $ web # 看调用图（web 形式）
+(pprof) $ text --lines # 看采样结果 （文本形式）
+```
+
+- 在浏览器上显示调用关系
+
+```bash
+ $ google-pprof --web /bin/ls <生成的 prof 名>
+```
+
+![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20231116105212940.png)
+
+# Reference
+
+```plain
+# 编译选项需要使用 -O0 （-g 用不用都行）否则会不显示函数名
+Removing nanosleep from all stack traces.
+Removing ros::ros_wallsleep from all stack traces.
+Removing ros::waitForShutdown from all stack traces.
+Removing main from all stack traces.
+``
+```
+
+
+
+2214/0/256：中断、逐出、字节
+
+## Usage
+
+使用 Prometheus 监控进程内存使用情况
+
+步骤 1：安装 process-exporter
+
+```bash
+# 安装 process-exporter
+$ sudo apt install prometheus-process-exporter
+```
+
+步骤 2：创建配置文件 dlio_odom_node.yml 使用正则的方式，监控进程名含有 `dlio_odom_node` 的进程，其他方式可参考 [Here](https://github.com/ncabatoff/process-exporter)
+
+```yaml
+# 监控某个进程
+process_names:
+ - name: "{{.Matches}}"
+   cmdline:
+   - 'dlio_odom_node'
+```
+
+步骤 3：启动 process-exporter，打开 127.0.0.1:9256
+
+```bash
+# 启动
+$ prometheus-process-exporter -config.path dlio_odom_node.yml
+```
+
+步骤 4：安装 [Prometheus](https://github.com/prometheus/prometheus)
+
+```bash
+$ sudo apt install prometheus-process-exporter
+```
+
+步骤 5：修改 Prometheus 的配置文档 （/etc/prometheus/prometheus.yml），添加 process exporter 信息
+
+```yaml
+- job_name: Process
+  static_configs:
+  - targets: ['localhost:9256']
+```
+
+步骤 6：检查 Prometheus 的有效性
+
+```bash
+$ promtool check config /etc/prometheus/prometheus.yml
+```
+
+步骤 7：重启 Prometheus
+
+```bash
+$ sudo systemctl restart prometheus
+```
+
+步骤 8：安装 Grafana，具体参考 [Here](https://grafana.com/docs/grafana/latest/setup-grafana/installation/debian/)
+
+```bash
+# 安装依赖
+$ sudo apt install -y apt-transport-https software-properties-common wget
+$ sudo mkdir -p /etc/apt/keyrings/
+$ wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+# stable releases
+$ echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+$ sudo apt update
+$ sudo apt install grafana
+```
+
+步骤 9：访问 127.0.0.1:3000，登录 Grafana（默认账号密码均为 admin）
+
+步骤 10：将 Prometheus 添加为 Grafana 的数据源，指向Prometheus 服务器（例如 `http://127.0.0.1:9090`）
+
+

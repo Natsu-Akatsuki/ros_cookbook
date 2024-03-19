@@ -1,0 +1,13 @@
+#!/bin/bash
+
+export XDG_SESSION_TYPE=x11
+export XKL_XMODMAP_DISABLE=1
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+vncconfig -nowin &
+gnome-panel &
+gsettings set org.gnome.desktop.lockdown disable-lock-screen true
+dbus-launch --exit-with-session gnome-session
+

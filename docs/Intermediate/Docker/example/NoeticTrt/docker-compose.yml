@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  sleinpir:
+    image: sleipnir
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sleipnir
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    ports:
+      - "15900:5900" # vncserverPORT
+      - "18888:8888" # jupyterPORT
+      - "31111:22"   # pycharmPORT
+      - "16006:6006"  # tensorboardPORT
+    dns:
+      - 223.5.5.5
+      - 223.6.6.6
+      - 8.8.8.8
+      - 119.29.29.29
+    shm_size: 8G
+    volumes: 
+      - ${HOME}/Sleipnir:/Sleipnir:rw
