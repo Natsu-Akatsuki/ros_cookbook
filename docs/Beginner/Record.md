@@ -52,6 +52,7 @@
     <summary>:wrench: <b>用例 2：</b>
         实现 ROS1 和 ROS2 包的相互转换
     </summary>
+Python 版本需 3.8+
 
 1）方案 1：基于 `ros_bridge` ，通过回放 `ROS2` 包，录制 `ROS1` 包 \
 2）方案 2：使用 [rosbags](https://gitlab.com/ternaris/rosbags) 提供的 API

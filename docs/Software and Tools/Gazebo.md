@@ -51,7 +51,7 @@ $ sudo apt remove gz-garden && sudo apt autoremove
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
-        相关的环境变量配置
+        <a href="https://classic.gazebosim.org/tutorials?tut=components">相关的环境变量配置</a>
     </summary>
 
 ```bash
@@ -81,10 +81,17 @@ $ export GAZEBO_MODEL_PATH=<模型位置>
 SDF（Simulation Description Format），专属于 Gazebo 的格式，相关标签信息可参考 [Here](http://sdformat.org/spec?ver=1.11&elem=link)
 
 ```bash
-
+# 方案 1：
 (ROS) $ gazebo <.world>
+# 方案 2：
+(ROS) $ rosrun gazebo_ros gazebo TD3.world
+
+# 方案 3：
+(ROS) $ gzserver # 无图形化界面
+(ROS) $ gzclient # 追加图形化界面
 # -u: 以暂停模式打开
 
+# 方案 4：
 (ROS1) $ roslaunch gazebo_ros empty_world.launch
 ```
 
@@ -95,13 +102,13 @@ SDF（Simulation Description Format），专属于 Gazebo 的格式，相关标�
         验证当前的 URDF 文件是否合法，合法时输出对应的 sdf 文件
     </summary>
 
-1）方案 1：
+方案 1：
 
 ```bash
 $ gz sdf -p <URDF 文件>
 ```
 
-2）[方案 2](https://classic.gazebosim.org/tutorials?tut=ros_urdf&cat=connect_ros#Tutorial:UsingaURDFinGazebo)：（纯粹检查 URDF 的合法性）
+[方案 2](https://classic.gazebosim.org/tutorials?tut=ros_urdf&cat=connect_ros#Tutorial:UsingaURDFinGazebo)：（纯粹检查 URDF 的合法性）
 
 ```bash
 # sudo apt install liburdfdom-tools
@@ -145,7 +152,7 @@ $ xacro model.xacro > model.urdf
         <a href="https://answers.ros.org/question/29437/possible-to-declare-static-object-in-urdf-file/">设置模块不受重力影响</a>
     </summary>
 
-1）方案 1：设置所有模块不受影响
+方案 1：设置所有模块不受影响
 
 ```xml
 
@@ -154,10 +161,10 @@ $ xacro model.xacro > model.urdf
 </gazebo>
 ```
 
-2）方案 2：绑定到 world 坐标系
+方案 2：绑定到 world 坐标系
 
 ```xml
-<!-- -->
+
 <link name="world"/>
 <joint name="world_joint" type="fixed">
 <origin xyz="2 0 1.5" rpy="0 0 0"/>
@@ -327,6 +334,15 @@ $ sudo dpkg -i foxglove-studio-1.39.0-linux-amd64.deb
 
 </details>
 
+<details>
+    <summary>:wrench: <b>用例 2：</b>
+        如何检查插件是否成功导入
+    </summary>
+
+启动 gazebo 时，追加 --verbose 选项
+
+</details>
+
 ### Shortcut
 
 <details>
@@ -392,6 +408,15 @@ $ __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia gazebo
 | ----------------------- | ---------------------- | ------------------------------------------------------------ |
 | /gazebo/set_model_state | gazebo_msgs/ModelState | [重置模型的位置](http://classic.gazebosim.org/tutorials?tut=ros_comm&cat=connect_ros) |
 
+```python
+rospy.ServiceProxy("/gazebo/unpause_physics", Empty)
+rospy.wait_for_service("/gazebo/unpause_physics")
+try:
+    rospy.ServiceProxy("/gazebo/unpause_physics", Empty)
+except (rospy.ServiceException) as e:
+    print("/gazebo/unpause_physics service call failed")
+```
+
 </details>
 
 <details>
@@ -405,10 +430,24 @@ $ __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia gazebo
 
 <details>
     <summary>:wrench: <b>用例 4：</b>
-        <a href="https://blog.csdn.net/Eric_Pxz/article/details/125412242">将 world 文件转换为栅格地图（高程图）</a>
+        <a href="https://github.com/marinaKollmitz/gazebo_ros_2Dmap_plugin">world to grid_map</a>
     </summary>
 
-TODO
+![](_asset%2Fworld_to_grid_map.png ':size=700 world_to_grid_map')
+
+通过基于栅格的判断该区域是否可行，来取代之前的 if else 判断，用于强化学习中判断某个区域是否可行
+
+```bash
+# 实测，可直接使用
+# 安装相关依赖
+$ apt install ros-${ROS_DISTRO}-move-base ros-${ROS_DISTRO}-map-server
+$ git clone https://github.com/marinaKollmitz/gazebo_ros_2Dmap_plugin
+$ catkin build
+$ rosservice call /gazebo_2Dmap_plugin/generate_map
+$ rosrun map_server map_saver -f <map_name> /map:=/map2d
+```
+
+相似的还有 Eric_Pxz 提供的插件，具体参考 [Here](https://blog.csdn.net/Eric_Pxz/article/details/125412242)
 
 </details>
 
@@ -436,7 +475,7 @@ TODO
         Gazebo 启动后黑屏，加载时间过长
     </summary>
 
-检查 `.world` 文件是否有不存在的资源。其中，基础模型可以在 GitHub 下下载如：
+检查 `.world` 文件是否有不存在的资源。其中，基础模型可以在 GitHub 下载如：
 
 ```bash
 $ git clone https://github.com/osrf/gazebo_models.git --depth=1 ~/.gazebo/models
@@ -461,6 +500,4 @@ $ git clone https://github.com/osrf/gazebo_models.git --depth=1 ~/.gazebo/models
 - [Gazebo API](https://github.com/gazebosim/gazebo-classic/blob/gazebo11/Migration.md)
 - [Ignition API](https://osrf-distributions.s3.amazonaws.com/ign-math/api/1.0.0/namespaceignition.html)
 - [Gazebo-classic -> Gazebo Sim SDF](https://gazebosim.org/api/gazebo/4.3/migrationsdf.html)
-
-[惯性的作用](https://www.youtube.com/watch?v=sHzC--X0zQE) 
-
+- [了解惯性的作用](https://www.youtube.com/watch?v=sHzC--X0zQE)
