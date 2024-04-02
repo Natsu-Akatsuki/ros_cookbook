@@ -1,8 +1,8 @@
 # RViz
 
-在 ROS1 中不推荐使用 RViz 的 Python 拓展库（ROS2 中暂时还没提供封装），一是文档太少，开发成本大；二是还有一些尚待解决的问题。比如退出 Qt 应用程序后，RViz 节点将成为僵尸节点，不能被`rosnode kill`掉，只能使用`rosnode cleanup`清理，实测在 C++中不存在这个问题，进程可以退出得很干净；另外不能够在 Qt 的`RViz`中添加图像面板，否则会有段错误（暂无解决方案）
+校验等级：:star::star::star::star:
 
-# Usage
+在 ROS1 中不推荐使用 RViz 的 Python 拓展库（ROS2 中暂时还没提供封装），一是文档太少，开发成本大；二是还有一些尚待解决的问题。比如退出 Qt 应用程序后，RViz 节点将成为僵尸节点，不能被`rosnode kill`掉，只能使用`rosnode cleanup`清理，实测在 C++中不存在这个问题，进程可以退出得很干净；另外不能够在 Qt 的`RViz`中添加图像面板，否则会有段错误（暂无解决方案）
 
 ## Docker
 
@@ -17,7 +17,7 @@ No OpenGL Support for nvidia render，于容器中检查一下命令行 `nvidia-
 
 <details>
     <summary>:wrench: <b>用例 2：</b>
-        Noetic 容器下渲染 RViz会有很强的撕裂效果，具体参考 <a herf="https://github.com/ros-visualization/rviz/issues/1780">Here</a>
+        <a href="https://github.com/ros-visualization/rviz/issues/1780">Noetic 容器下渲染 RViz会有很强的撕裂效果</a>
     </summary>
 
 ```bash
@@ -93,78 +93,118 @@ $ docker run \
 RViz 的 marker 是叠加式显示的，除非被替换或者设置显示时间。可以参考如下代码，在下一次发布前，先发布一次清空 marker 的操作（相当于用空的 marker 进行替换）
 
 ```python
-def clear_bounding_box_marker(stamp, identity, ns="uname", frame_id="lidar"):
-    box_marker = Marker()
-    box_marker.header.stamp = stamp
-    box_marker.header.frame_id = frame_id
+def init_marker_array():
+    """
+    Initialize a new MarkerArray with an empty marker for deleting all markers.
 
-    box_marker.ns = ns
-    box_marker.id = identity
+    :return: A MarkerArray object with an empty marker for deleting all markers.
+    """
+    marker_array = MarkerArray()
+    empty_marker = Marker()
+    empty_marker.action = Marker.DELETEALL
+    marker_array.markers.append(empty_marker)
+    return marker_array
 
-    box_marker.action = Marker.DELETEALL
-    if __ROS__VERSION__ == 1:
-        box_marker.lifetime = rospy.Duration(0.02)
-    elif __ROS__VERSION__ == 2:
-        box_marker.lifetime = Duration(seconds=0.02).to_msg()
 
-    return box_marker
+marker_array = am_marker.init_marker_array()
+# 创建 marker
+marker_array.markers.append(marker)
 ```
 
 </details>
 
-## Header or Class
+## Header
 
-具体参考 [Here](https://github.com/ros2/rviz/blob/rolling/docs/migration_guide.md)
+- `rviz` -> `rviz_common`，`h` -> `hpp`
 
-- rviz -> rviz_common
-- ogre_helper -> rviz_rendering 或其子文件夹
+| ROS1                                                                                                                                                                                                                                                                                                       | ROS2                                                                                                                                                                                                                                                                                                                                                             |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| #include "rviz/properties/float_property.h"<br/>#include "rviz/properties/vector_property.h"<br/>#include "rviz/properties/bool_property.h"<br/>#include "rviz/properties/tf_frame_property.h"<br/>#include "rviz/properties/editable_enum_property.h"<br/>#include "rviz/properties/ros_topic_property.h" | #include "rviz_common/properties/float_property.hpp"<br/>#include "rviz_common/properties/vector_property.hpp"<br/>#include "rviz_common/properties/bool_property.hpp"<br/>#include "rviz_common/properties/tf_frame_property.hpp"<br/>#include "rviz_common/properties/editable_enum_property.hpp"<br/>#include "rviz_common/properties/ros_topic_property.hpp" |
 
-```cpp
-// >>> ROS2 >>>
-#include <rviz_rendering/objects/billboard_line.hpp>
-#include <rviz_rendering/objects/shape.hpp>
-#include <rviz_rendering/objects/arrow.hpp>
-#include <rviz_rendering/objects/point_cloud.hpp>
-#include <rviz/frame_manager.hpp>
-#include <rviz_default_plugins/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp>
+| ROS1                                                                                                              | ROS2                                                                                                                                         |
+|-------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| #include "rviz/view_controller.h" <br />#include "rviz/view_manager.h" <br />#include "rviz/render_panel.h"<br /> | #include "rviz_common/view_controller.hpp" <br />#include "rviz_common/view_manager.hpp" <br />#include "rviz_common/render_panel.hpp"<br /> |
 
-// >>> ROS1 >>>
-#include <rviz/ogre_helpers/billboard_line.h>
-#include <rviz/ogre_helpers/shape.h>
-#include <rviz/ogre_helpers/arrow.h>
-#include <rviz/ogre_helpers/point_cloud.h>
-#include <rviz/frame_manager_iface.hpp>
-#include <rviz/default_plugin/point_cloud_transformers.h>
-```
+- `ogre_helper` -> `rviz_rendering/objects`，`h` -> `hpp`
 
-- default_plugin -> rviz_default_plugins
-- NodeHandle：ROS1 中没有`getRosNodeAbstraction`，需要显式构建句柄
+| ROS1                                                                                                                                                                           | ROS2                                                                                                                                                                                                       |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| #include "rviz/ogre_helpers/shape.h"                                                                                                                                           | #include "rviz_rendering/objects/shape.hpp"<br />#include "rviz_rendering/geometry.hpp"                                                                                                                    |
+| #include <rviz/ogre_helpers/billboard_line.h><br/>#include <rviz/ogre_helpers/shape.h><br/>#include <rviz/ogre_helpers/arrow.h><br/>#include <rviz/ogre_helpers/point_cloud.h> | #include <rviz_rendering/objects/billboard_line.hpp><br/>#include <rviz_rendering/objects/shape.hpp><br/>#include <rviz_rendering/objects/arrow.hpp><br/>#include <rviz_rendering/objects/point_cloud.hpp> |
 
-```cpp
-// >>> ROS2 >>>
-rclcpp::Node::SharedPtr raw_node = context_->getRosNodeAbstraction().lock()->get_raw_node();
+- `default_plugin` -> `rviz_default_plugins`
 
-// >>> ROS1 >>>
-ros::NodeHandle nh;
-```
+| ROS1                                                      | ROS2                                                                                                 |
+|-----------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| #include <rviz/frame_manager.hpp>                         | #include <rviz_common/frame_manager_iface.hpp>                                                       |
+| #include <rviz/default_plugin/point_cloud_transformers.h> | #include <rviz_default_plugins/rviz_default_plugins/displays/pointcloud/point_cloud_transformer.hpp> |
 
-## Plugins
-
-RViz 的插件类型包括：Display, Panel, Tool, View Controller，开发时具体参考 [Here](https://github.com/ros2/rviz/blob/rolling/docs/plugin_development.md)
-
-其中 Display 一般用于显示（如渲染点云、文本、线条），Panel 一般用于控制，Tool 一般用于交互（键鼠交互）
-
-### Display
+## CMake
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
-        编写 Display 类插件（不包含 C++ 源程序）
+        <a href="https://cmake.org/cmake/help/latest/prop_tgt/AUTOMOC.html">触发 Qt 的 MOC 预处理器对 Qt 宏进行处理</a>
     </summary>
 
+<!-- tabs:start -->
+
+#### **方案 1**
+
+```cmake
+// 默认处理目标文件
+// 如果目标文件只有源文件，一种方法是将头文件放在目标文件同目录（且文件名需相同，e.g. a.cpp 和 a.hpp）
+set(CMAKE_AUTOMOC ON)
+add_library(... a.cpp)
+
+// 另一种方法是，将头文件也作为目标文件
+set(CMAKE_AUTOMOC ON)
+add_library(${PROJECT_NAME} a.cpp a.hpp)
+```
+
+#### **方案 2**
+
+```cmake
+// 显式调用
+qt5_wrap_cpp(MOC_FILES
+  src/a.cpp include/a.hpp
+)
+
+add_library(${PROJECT_NAME} ${MOC_FILES})
+```
+
+<!-- tabs:end -->
+
+</details>
+
 <details>
-    <summary>1）步骤 1：编写 CMakeLists.txt</summary>
+    <summary>:wrench: <b>用例 2：</b>
+        基础模版
+    </summary>
 
 <!-- tabs:start -->
+
+#### **ROS2**
+
+```cmake
+# 触发 Qt 的 MOC 编译器对 Qt 宏进行处理
+set(CMAKE_AUTOMOC ON)
+
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
+
+find_package(Qt5 REQUIRED Core Widgets)
+set(QT_LIBRARIES Qt5::Widgets)
+include_directory(${Qt5Widgets_INCLUDE_DIRS})
+
+ament_auto_add_library(库名 依赖)
+pluginlib_export_plugin_description_file(rviz_common <插件描述文件的位置>)
+
+register_rviz_ogre_media_exports(DIRECTORIES "media")
+
+ament_auto_package(
+  INSTALL_TO_SHARE
+)
+```
 
 #### **ROS1**
 
@@ -172,7 +212,6 @@ RViz 的插件类型包括：Display, Panel, Tool, View Controller，开发时�
 # 触发 Qt 的 MOC 编译器对 Qt 宏进行处理
 set(CMAKE_AUTOMOC ON)
 
-# ROS1
 if(rviz_QT_VERSION VERSION_LESS "5")
   message(STATUS "Using Qt4 based on the rviz_QT_VERSION: ${rviz_QT_VERSION}")
   find_package(Qt4 ${rviz_QT_VERSION} EXACT REQUIRED QtCore QtGui)
@@ -187,32 +226,16 @@ find_package(catkin REQUIRED COMPONENTS rviz)
 target_link_libraries(... ${QT_LIBRARIES})
 ```
 
-#### **ROS2**
-
-```cmake
-# 触发 Qt 的 MOC 编译器对 Qt 宏进行处理
-set(CMAKE_AUTOMOC ON)
-
-# ROS2
-find_package(pluginlib REQUIRED)
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
-find_package(rviz_common REQUIRED)
-find_package(rviz_rendering REQUIRED)
-include_directory(${Qt5Widgets_INCLUDE_DIRS})
-
-# pluginlib_export_plugin_description_file(rviz_common <插件描述文件的位置>)
-pluginlib_export_plugin_description_file(rviz_common plugin_description.xml)
-
-register_rviz_ogre_media_exports(DIRECTORIES "media")
-```
-
 <!-- tabs:end -->
 
 </details>
 
+## Package
 
 <details>
-    <summary>2）步骤 2：编写 package.xml</summary>
+    <summary>:wrench: <b>用例 1：</b>
+        基础模板
+    </summary>
 
 <!-- tabs:start -->
 
@@ -228,12 +251,19 @@ register_rviz_ogre_media_exports(DIRECTORIES "media")
     <maintainer email="you@example.com">Your Name</maintainer>
     <license>TODO</license>
 
+    <buildtool_depend>ament_cmake</buildtool_depend>
+    <member_of_group>rosidl_interface_packages</member_of_group>
+
     <!-- Build and export dependencies. -->
     <build_depend>ament_cmake_auto</build_depend>
+
     <depend>rviz_common</depend>
     <depend>rviz_default_plugins</depend>
     <depend>rviz_rendering</depend>
     <depend>rviz_visual_tools</depend>
+    <depend>plugin_lib</depend>
+
+
     <export>
         <build_type>ament_cmake</build_type>
     </export>
@@ -255,25 +285,75 @@ register_rviz_ogre_media_exports(DIRECTORIES "media")
 </package>
 ```
 
-> [!note]
->
-> 可通过命令行 `rospack plugins --attrib=plugin rviz` 来判断插件是否导出成功
+</details>
+
+<!-- tabs:end -->
+
+## Plugins
+
+RViz 的插件类型包括：Display, Panel, Tool, View Controller，其中 Display 一般用于显示（如渲染点云、文本、线条），Panel 一般用于控制，Tool 一般用于交互（键鼠交互）
+
+<details>
+    <summary>:wrench: <b>用例 1：</b>
+        获取 RViz 主窗口的大小
+    </summary>
+
+<!-- tabs:start -->
+
+#### **ROS2**
+
+```cpp
+// 获取主窗口
+#include "rviz_common/window_manager_interface.hpp"
+// QWidget* parent = getWindowManager()->getParentWindow();
+context_->getWindowManager()->getParentWindow()->width();
+context_->getWindowManager()->getParentWindow()->height();
+```
+
+#### **ROS1**
+
+```cpp
+context_->getViewManager()->getRenderPanel()->getRenderWindow()->getWidth();
+context_->getViewManager()->getRenderPanel()->getRenderWindow()->getHeight();
+```
 
 <!-- tabs:end -->
 
 </details>
 
 <details>
-    <summary>3）步骤 3：编写 plugin_description.xml</summary>
+    <summary>:wrench: <b>用例 2：</b>
+        设置光标 logo
+    </summary>
 
 <!-- tabs:start -->
 
 #### **ROS2**
 
-相比于 ROS1，ROS2 的动态库路径有所简化，只需要提供动态库名称即可（如不需要前缀 lib/）
+```cpp
+makeIconCursor("package://rviz_common/icons/forbidden.svg");
+```
+
+#### **ROS1**
+
+```cpp
+makeIconCursor("package://rviz/icons/forbidden.svg");
+```
+
+<!-- tabs:end -->
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 3：</b>
+        编写 plugin_description.xml
+    </summary>
+<!-- tabs:start -->
+
+#### **ROS2**
 
 ```xml
-
+<!-- 相比于 ROS1，ROS2 的动态库路径有所简化（如不需要路径前缀 lib/）-->
 <library path="rviz_plugins">
     <class name="rviz_plugins/LogPanels"
            type="rviz_plugins::LogPanels"
@@ -287,7 +367,7 @@ register_rviz_ogre_media_exports(DIRECTORIES "media")
 
 ```xml
 
-<library path="lib/libtier4_perception_rviz_plugin">  <!--动态库的路径（不需要.so 后缀，或要前缀）-->
+<library path="lib/libtier4_perception_rviz_plugin">  <!-- 动态库的路径（不需要.so 后缀）-->
     <class name="rviz_plugins/PedestrianInitialPoseTool"
            type="rviz_plugins::PedestrianInitialPoseTool"
            base_class_type="rviz::Tool">
@@ -308,134 +388,18 @@ register_rviz_ogre_media_exports(DIRECTORIES "media")
 </details>
 
 <details>
-    <summary>4）步骤 4：在源程序中添加插件宏，将插件（即类）导入到库文件中以被调用</summary>
-
-```cpp
-// >>> ROS2 >>>
-// 在源程序末尾追加导出插件的宏
-#include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(rviz_plugins::DeleteAllObjectsTool, rviz_common::Tool)
-
-// >>> ROS1 >>>
-// 在源程序末尾追加导出插件的宏
-#include <pluginlib/class_list_macros.h>
-// 插件类，基类（含命令空间）
-PLUGINLIB_EXPORT_CLASS(rviz_plugins::DeleteAllObjectsTool, rviz::Tool)
-```
-
-</details>
-
-</details>
-
-<details>
-    <summary>:wrench: <b>用例 2：</b>
-        编写 Display 类插件（含 C++ 源程序，非虚函数）
+    <summary>:wrench: <b>用例 4：</b>
+        在源程序末尾追加导出插件的宏，将插件（即类）导入到库文件中以被调用
     </summary>
 
-<details>
-    <summary>1）步骤 1：配置 Display 的属性</summary>
-
-<!-- tabs:start -->
-
-#### **ROS2**
-
-```cpp
-// color 属性
-rviz_common::properties::ColorProperty color_property_ = new rviz_common::properties::ColorProperty(<属性名>, QColor(204, 51, 204), <属性描述>, this, SLOT(updateColorAndAlpha()));
-
-// alpha 属性
-rviz_common::properties::FloatProperty alpha_property_ = new rviz_common::properties::FloatProperty(<属性名>, <默认取值>, <属性描述>, this, SLOT(updateColorAndAlpha()));
-
-// int 属性
-rviz_common::properties::IntProperty history_length_property_ = new rviz_common::properties::IntProperty(<属性名>, <默认取值>, <属性描述>, this, SLOT(updateHistoryLength()));
-// 设置取值范围
-history_length_property_->setMin(1);
-history_length_property_->setMax(100000);
-
-// topic 属性
-update_topic_property_ = new rviz_common::properties::RosTopicProperty(this, SLOT(updateMapUpdateTopic()));
-```
-
-#### **ROS1**
-
-TODO
-
-<!-- tabs:end -->
-
-</details>
+| ROS2(C++)                                                                                                                                                                                                                                                               | ROS1(C++)                                                                                                                                                                                                                                               |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| // 插件类，基类（含命令空间）<br />`#include <pluginlib/class_list_macros.hpp>`<br/>`PLUGINLIB_EXPORT_CLASS(rviz_plugins::DeleteAllObjectsTool, rviz_common::Tool)`<br/>`PLUGINLIB_EXPORT_CLASS(rviz_animated_view_controller::AnimatedViewController, rviz_common::ViewController)` | // 插件类，基类（含命令空间）<br />`#include <pluginlib/class_list_macros.h>`<br/>`PLUGINLIB_EXPORT_CLASS(rviz_plugins::DeleteAllObjectsTool, rviz::Tool)`<br/>`PLUGINLIB_EXPORT_CLASS(rviz_animated_view_controller::AnimatedViewController, rviz::ViewController)` |
 
 </details>
 
 <details>
-    <summary>:wrench: <b>用例 3：</b>
-        编写 Display 类插件（含C++源程序，含虚函数）
-    </summary>
-
-<details>
-    <summary>案例 1：重写 ROSTopicDisplay 的 onInitialize() 函数</summary>
-
-重写 MFDClassDisplay 的 onInitialize() 函数，则需预先调用 MFDClassDisplay::onInitialize()
-
-```cpp
-void OverlayMenuDisplay::onInitialize() {
-    // 初始化主题信息    
-    RTDClass::onInitialize(); // （mandatory）用于初始化 ROS 节点
-    using MsgT = am_rviz_plugins_msgs::msg::OverlayMenu;
-    QString message_name = QString::fromStdString(rosidl_generator_traits::name<MsgT>());
-    std::string topic_name = "/default";
-    this->topic_property_->setMessageType(message_name);
-    this->topic_property_->setValue(topic_name.c_str());
-    this->topic_property_->setDescription("Topic to subscribe to.");
-    
-    // 等价于：
-    // QString topic_name = "/default";
-    // QString topic_type = rosidl_generator_traits::data_type<MsgT>();
-    // RTDClass::setTopic(topic_name, topic_type);
-}
-```
-
-</details>
-
-<details>
-    <summary>案例 2：重写 ROSTopicDisplay 的 reset()，onEnable()，onDisable() 函数</summary>
-
-reset() 会在 Display 创建时会调用，onEnable() 会在 Display 启用时调用，onDisable() 则会在 Display 关闭时调用
-
-```cpp
-// Called to tell the display to clear its state
-void OverlayMenuDisplay::reset() {
-    RosTopicDisplay::reset();
-}
-
-void OverlayMenuDisplay::onEnable() {
-    if (overlay_) {
-        overlay_->show();
-    }
-}
-
-void OverlayMenuDisplay::onDisable() {
-    if (overlay_) {
-        overlay_->hide();
-    }
-}
-```
-
-</details>
-
-</details>
-
-### Panel
-
-TODO
-
-### Tool
-
-TODO
-
-## Others
-
-<details>
-    <summary>:wrench: <b>用例 1：</b>
+    <summary>:wrench: <b>用例 5：</b>
         给插件添加 logo
     </summary>
 
@@ -443,7 +407,7 @@ TODO
 
 #### **ROS2**
 
-1）步骤 1：在当前包目录下创建 icon/classes 文件夹，并在 icon/classes 目录下添加`.png`文件（`icon`文件名需同插件名），比如以下的插件名为`Teleop`，则 icon 文件名为 `Teleop.png` 。如果没有 name 属性，则使用类名，即文件名应为 `TeleopPanel`
+步骤 1：在当前包目录下创建 icon/classes 文件夹，并在 icon/classes 目录下添加`.png`文件（`icon`文件名需同插件名），比如以下的插件名为`Teleop`，则 icon 文件名为 `Teleop.png` 。如果没有 name 属性，则使用类名，即文件名应为 `TeleopPanel`
 
 ```xml
 
@@ -458,7 +422,7 @@ TODO
 </library>
 ```
 
-2）步骤 2：修改 CMakeLists.txt，将文件安装到 install/share 目录下
+步骤 2：修改 CMakeLists.txt，将文件安装到 install/share 目录下
 
 ```cmake
 # 导出相关的共享库、依赖等信息
@@ -477,31 +441,168 @@ TODO
 </details>
 
 <details>
-    <summary>:wrench: <b>用例 2：</b>
-        RViz2 中如何使用 Logger
+    <summary>:wrench: <b>用例 6：</b>
+        判断插件是否顺利导出
+    </summary>
+
+<!-- tabs:start -->
+
+> [!note]
+>
+> 即便导出了，但可能因为写错 plugin_description.xml 而导致 RViz 无法找到相应的插件
+
+#### **ROS2**
+
+[ROS2 中暂时没有显示插件的工具，该 feature 还没 merge 进主分支中](https://github.com/ros2/ros2cli/pull/340)，需额外下载
+
+```bash
+$ git clone https://github.com/artivis/pluginlib/tree/feature/ros2plugin -b feature/ros2plugin
+$ cd pluginlib/ros2plugin/
+$ python3 develop setup.py
+
+$ ros2 plugin list
+$ ros2 plugin list --packages
+```
+
+#### **ROS1**
+
+```bash
+$ rospack plugins --attrib=plugin rviz
+```
+
+<!-- tabs:end -->
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 7：</b>
+        将 RViz1 的配置文件转换为 RViz2 的配置文件（版本需大于等于 <a href="https://github.com/ros2/rviz/blob/iron/rviz2/scripts/rviz1_to_rviz2.py">Iron</a>）
+    </summary>
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 8：</b>
+        重载 onInitialize 的注意事项
     </summary>
 
 ```cpp
-// 不会输出到 /rosout
-RVIZ_COMMON_LOG_INFO("Hello, world!");
-RVIZ_COMMON_LOG_INFO_STREAM("Hello" << "world!");
+rclcpp::Node::SharedPtr rviz_node_;
+rviz_common::properties::RosTopicProperty *ros_topic_property_;
 
-// 会发布到 /rosout
-// 其中的节点为 rviz 而非 rviz2
-RCLCPP_INFO(rclcpp::get_logger("rviz"), "clicked: (%d, %d)", event.x, event.y);
+onInitialize() {  
+  // context_ 的调用不能放在构造函数，此时的构造函数 context_ 为 nullptr
+  rviz_node_ = context_->getRosNodeAbstraction().lock()->get_raw_node();
+  // ROS topic 的相关属性在此处进行初始化（不初始化，会有段错误）
+  ros_topic_property_->initialize(context_->getRosNodeAbstraction());
+}
 ```
 
 </details>
 
 <details>
-    <summary>:wrench: <b>用例 3：</b>
-        将 RViz1 的配置文件转换为 RViz2 的配置文件（版本需大于等于 <a href="https://github.com/ros2/rviz/blob/iron/rviz2/scripts/rviz1_to_rviz2.py">Iron</a>）
+    <summary>:wrench: <b>用例 9：</b>
+        虚函数
     </summary>
+
+| 类              | ROS2                                                                                 | ROS1                      |
+|----------------|--------------------------------------------------------------------------------------|---------------------------|
+| ViewController | virtual void lookAt(const Ogre::Vector3 & point) = 0;<br />virtual void reset() = 0; | virtual void reset() = 0; |
+
 </details>
 
----
+<details>
+    <summary>:wrench: <b>用例 10：</b>
+        示例代码
+    </summary>
 
-# Shortcut
+| 需求                     | ROS2                                                                                           | ROS1 |
+|------------------------|------------------------------------------------------------------------------------------------|------|
+| Control Viewer 追加快捷键设置 | https://github.com/ros2/rviz/blob/rolling/rviz_common/src/rviz_common/view_controller.cpp#L228 | TODO |
+
+TODO
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 1：</b>
+        创建句柄
+    </summary>
+
+ROS1 中没有`getRosNodeAbstraction`，需要显式构建句柄
+
+<!-- tabs:start -->
+
+#### **ROS2**
+
+```cpp
+rclcpp::Node::SharedPtr node_;
+
+void 类名::onInitialize()
+{
+  MFDClass::onInitialize();  
+      
+  // context_ 等价于 this->getDisplayContext()
+  node_ = context_->getRosNodeAbstraction().lock()->get_raw_node();
+  // 配置订阅器和发布器
+  sub_ = node_->create_subscription(...)
+}
+```
+
+#### **ROS1**
+
+```cpp
+ros::NodeHandle nh;
+```
+
+<!-- tabs:end -->
+
+
+</details>
+
+<details>
+    <summary>:question: <b>问题 1：</b>
+        RViz2 中 /usr/include/OGRE/OgreGpuProgramParams.h:1251:11: error: ‘HashMap’ does not name a type        
+    </summary>
+
+库冲突，需使用 RViz 中的 OGRE 而非系统的 OGRE 文件
+
+```cpp
+// 使用 .../opt/rviz_orge_vendor/include/OGRE/ 下的文件
+#include <OgreSceneNode.h>
+#include <OgreSceneManager.h>
+
+// 使用 /usr/include/OGRE/ 下的文件
+#include <OgreSceneNode.h>
+#include <OgreSceneManager.h>
+```
+
+</details>
+
+<details>
+    <summary>:question: <b>问题 2：</b> 
+        运行期出现：undefined symbol: _ZTVN29rviz_animated_view_controller22AnimatedViewControllerE, at ./src/shared_library.c:99
+    </summary>
+
+CMakeLists.txt 中没开 automoc 处理 Qt 宏，导致当前类不完整（incomplete）
+
+</details>
+
+<details>
+    <summary>:question: <b>问题 3：</b>
+        从代码层面考虑 View controller 的视角更新是怎么触发的
+    </summary>
+
+```cpp
+/// Called at 30Hz by ViewManager::update() while this view is active.
+/**
+ * Override with code that needs to run repeatedly.
+ */
+virtual void update(float dt, float ros_dt);
+```
+
+</details>
+
+## Shortcut
 
 | 快捷键 |        功能        |
 |:---:|:----------------:|
@@ -511,17 +612,24 @@ RCLCPP_INFO(rclcpp::get_logger("rviz"), "clicked: (%d, %d)", event.x, event.y);
 |  p  | 2D Pose Estimate |
 |  c  |  Publish Point   |
 
+## Reference
 
-# Plugins
+| 概要                      | ROS2                                                                                                | ROS1                                                                                                        |
+|-------------------------|-----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| API 迁移                  | https://github.com/ros2/rviz/blob/rolling/docs/migration_guide.md                                   | -                                                                                                           |
+| 官方 GitHub               | https://github.com/ros2/rviz                                                                        | https://github.com/ros-visualization/rviz                                                                   |
+| 插件教程                    | https://github.com/ros-visualization/visualization_tutorials/tree/ros2/rviz_plugin_tutorials/src)   | https://docs.ros.org/en/kinetic/api/rviz_plugin_tutorials/html/                                             |
+| interactive marker 代码示例 | https://github.com/ros-visualization/visualization_tutorials/tree/ros2/interactive_marker_tutorials | https://github.com/ros-visualization/visualization_tutorials/tree/noetic-devel/interactive_marker_tutorials |
 
-|                                                            插件                                                             |           备注            |
-|:-------------------------------------------------------------------------------------------------------------------------:|:-----------------------:|
-|                           [jsk_visualization](https://github.com/jsk-ros-pkg/jsk_visualization)                           |     目前只提供了 ROS1 版本      |
-|                      [vision_msgs_rviz_plugins](https://github.com/NovoG93/vision_msgs_rviz_plugins)                      |     目前只提供了 ROS2 版本      |
-|             [pointcloud2_normal_rviz_plugin](https://github.com/UCR-Robotics/pointcloud2_normal_rviz_plugin)              | 目前只提供了 ROS1 版本，用于可视化法向量 |
-|                               [miv_rviz_panel](https://github.com/quantumxt/miv_rviz_panel)                               |  用于在一个 Display 中显示多张图片  |
-| [plugin_lecture](https://github.com/project-srs/ros_lecture/tree/014c2e409c8eed7a17300cb73407c77379cbfba1/plugin_lecture) |    包含了 overlay 显示等插件    |
+## Repository
 
-# Reference
-
-- [RViz plugin tutorials ](https://github.com/ros-visualization/visualization_tutorials/tree/noetic-devel/rviz_plugin_tutorials) 
+|                                                            插件                                                             |                 备注                  |
+|:-------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------:|
+|                           [jsk_visualization](https://github.com/jsk-ros-pkg/jsk_visualization)                           |           目前只提供了 ROS1 版本            |
+|                      [vision_msgs_rviz_plugins](https://github.com/NovoG93/vision_msgs_rviz_plugins)                      |           目前只提供了 ROS2 版本            |
+|             [pointcloud2_normal_rviz_plugin](https://github.com/UCR-Robotics/pointcloud2_normal_rviz_plugin)              |       目前只提供了 ROS1 版本，用于可视化法向量       |
+|                               [miv_rviz_panel](https://github.com/quantumxt/miv_rviz_panel)                               |        用于在一个 Display 中显示多张图片        |
+| [plugin_lecture](https://github.com/project-srs/ros_lecture/tree/014c2e409c8eed7a17300cb73407c77379cbfba1/plugin_lecture) |          包含了 overlay 显示等插件          |
+|                  [rviz2_camera_ray_tool](https://github.com/schornakj/rviz2_camera_ray_tool/tree/master)                  | 选点 + 可视化射线（提供了使用 rclcpp::Node 的新思路） |
+|            [rviz_animated_view_controller](https://github.com/ros-visualization/rviz_animated_view_controller)            |               视图控制插件                |
+|                         [rviz_cinematographer](https://github.com/AIS-Bonn/rviz_cinematographer)                          |                TODO                 |
