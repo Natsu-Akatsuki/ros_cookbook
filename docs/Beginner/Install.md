@@ -6,8 +6,7 @@
 
 ## ROS2
 
-适用于 Humble (Ubuntu 22.04)，具体参考 [Here](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)；
-若要安装尝鲜版可参考 [Here](https://docs.ros.org/en/humble/Installation/Testing.html)
+适用于 Humble (Ubuntu 22.04)，具体参考 [Here](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)；若要安装尝鲜版可参考 [Here](https://docs.ros.org/en/humble/Installation/Testing.html)
 
 <!-- tabs:start -->
 
@@ -20,7 +19,14 @@ $ sudo apt update && sudo apt install curl gnupg lsb-release
 $ sudo apt upgrade
 $ sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
 
-# URL 可改为：https://mirrors.tuna.tsinghua.edu.cn/ros2/ubuntu
+# Failed to conned to raw.githubusercontent.com port 443: Connection refused 时
+$ sudo vim /etc/hosts
+# 追加：185.199.108.133 raw.githubusercontent.com
+
+# 清华源
+# $ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] https://mirrors.tuna.tsinghua.edu.cn/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# 默认源
 $ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
 $ sudo apt update
@@ -40,7 +46,7 @@ $ ros2 run demo_nodes_cpp talker
 
 #### **source**
 
-缺点是不能使用从 apt 安装的 ROS 包
+缺点是不能使用基于 apt 安装的 ROS 包
 
 ```bash
 # >>> 安装相关开发工具 >>>
