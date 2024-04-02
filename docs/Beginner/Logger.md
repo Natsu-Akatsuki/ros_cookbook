@@ -1,46 +1,19 @@
 # Logging
 
-# Usage
+校验等级：:star::star::star::star:
 
-## Client Library
+## API
 
-|       ROS1       |          ROS2           |
-|:----------------:|:-----------------------:|
-|     ROS_INFO     |       RCLCPP_INFO       |
-| ROS_ERROR_STREAM |   RCLCPP_ERROR_STREAM   |
-|  ROS_DEBUG_COND  | RCLCPP_DEBUG_EXPRESSION |
+|                                                                  ROS2                                                                   |                                                                          ROS1                                                                           |
+|:---------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|                        // 普通输出<br />`RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());`                        |                                           // 普通输出<br />`ROS_INFO("Publishing: '%s'", message.data.c_str());`                                            |
+| // 流输出<br />`RCLCPP_ERROR_STREAM(rclcpp::get_logger("lanelet2_extension.visualization"), __FUNCTION__ << ": marker is null pointer!");` |                                      // 流输出<br />`ROS_ERROR_STREAM(__FUNCTION__ << ": marker is null pointer!");`                                       |
+|   // 定时输出<br/>`RCLCPP_ERROR_THROTTLE(get_logger(), *get_clock(), 5000/*unit: ms*/, "behavior path output is empty! Stop publish."))`    |                             // 定时输出<br />`ROS_DEBUG_THROTTLE(60/*unit: sec*/, "This message will print every 60 seconds");`                             |
+|                                                 // 条件输出<br />`RCLCPP_DEBUG_EXPRESSION`                                                  | // 条件输出<br />`ROS_DEBUG_COND(x < 0, "Uh oh, x = %d, this is bad", x);`<br/><br />`ROS_DEBUG_STREAM_COND(x < 0, "Uh oh, x = " << x << ", this is bad");` |
+|               // 跳过第一次的输出<br/>`RCLCPP_INFO_SKIPFIRST_THROTTLE(get_logger(), *get_clock(), 5000, "waiting for %s", name);`               |                                                                          TODO                                                                           |
+|          // 全局日志：<br/>`RCLCPP_ERROR(rclcpp::get_logger("data_process"), "clear lidar buffer, only happen at the beginning");`           |                                                                          TODO                                                                           |
 
-- ROS1
-
-```cpp
-
-// >>> ROS1 >>>
-// 普通输出
-ROS_INFO("Publishing: '%s'", message.data.c_str());
-// 流输出
-ROS_ERROR_STREAM(__FUNCTION__ << ": marker is null pointer!");
-// 定时输出
-ROS_DEBUG_THROTTLE(60/*unit: sec*/, "This message will print every 60 seconds");
-// 条件输出
-ROS_DEBUG_COND(x < 0, "Uh oh, x = %d, this is bad", x);
-ROS_DEBUG_STREAM_COND(x < 0, "Uh oh, x = " << x << ", this is bad");
-
-// >>> ROS2 >>>
-// 普通输出
-RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
-// 流输出
-RCLCPP_ERROR_STREAM(rclcpp::get_logger("lanelet2_extension.visualization"), __FUNCTION__ << ": marker is null pointer!");
-// 定时输出
-RCLCPP_ERROR_THROTTLE(get_logger(), *get_clock(), 5000/*unit: ms*/, "behavior path output is empty! Stop publish."))
-// 跳过第一次的输出
-RCLCPP_INFO_SKIPFIRST_THROTTLE(get_logger(), *get_clock(), 5000, "waiting for %s", name);
-// 条件输出
-RCLCPP_DEBUG_EXPRESSION
-// 全局日志：
-RCLCPP_ERROR(rclcpp::get_logger("data_process"), "clear lidar buffer, only happen at the beginning");
-```
-
-## Configuration
+## Usage
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -62,7 +35,7 @@ $ export RCUTILS_COLORIZED_OUTPUT=1
 
 #### **ROS2**
 
-1）方案 1：ros2 run
+方案 1：ros2 run
 
 ```bash
 # 指定某个节点的输出等级（DEBUG, INFO, WARN, ERROR or FATAL）
@@ -71,7 +44,7 @@ $ export RCUTILS_COLORIZED_OUTPUT=1
 
 #### **ROS1**
 
-1）方案 1：[修改程序](http://wiki.ros.org/roscpp/Overview/Logging)
+方案 1：[修改程序](http://wiki.ros.org/roscpp/Overview/Logging)
 
 ```cpp
 // 程序上的修改
@@ -82,14 +55,45 @@ if(ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels:
 }
 ```
 
-2）方案 2：`rqt_console` \
-3）方案 3：[配置文档](https://wiki.nps.edu/display/MRC/Setting+Logging+Level)
+方案 2：`rqt_console` \
+方案 3：[配置文档](https://wiki.nps.edu/display/MRC/Setting+Logging+Level)
 
 <!-- tabs:end -->
 
 </details>
 
-# Reference
+<details>
+    <summary>:wrench: <b>用例 3：</b>
+        <a href="https://github.com/ros2/rviz/blob/rolling/docs/migration_guide.md">RViz2 中如何使用日志功能</a>
+    </summary>
 
-- Logger official tutorial for [ROS1](http://wiki.ros.org/roscpp/Overview/Logging) and [ROS2](https://docs.ros.org/en/humble/Concepts/About-Logging.html)
-- Logger API for [ROS2](https://docs.ros2.org/bouncy/api/rclcpp/logging_8hpp.html)
+```cpp
+#include "rviz_common/logging.hpp"
+
+// 不会输出到 /rosout
+RVIZ_COMMON_LOG_INFO("Hello, world!");
+RVIZ_COMMON_LOG_INFO_STREAM("Hello" << "world!");
+
+// 会发布到 /rosout
+// 其中的节点为 rviz 而非 rviz2
+RCLCPP_INFO(rclcpp::get_logger("rviz"), "clicked: (%d, %d)", event.x, event.y);
+```
+
+</details>
+
+## Tools
+
+### rqt_console
+
+- 显示 ROS 的日志信息
+
+```bash
+$ rosrun rqt_console rqt_console
+```
+
+## Reference
+
+| 概要   | ROS2                                                       | ROS1                                        |
+|------|------------------------------------------------------------|---------------------------------------------|
+| 官方文档 | https://docs.ros.org/en/humble/Concepts/About-Logging.html | http://wiki.ros.org/roscpp/Overview/Logging |
+| API  | https://docs.ros2.org/bouncy/api/rclcpp/logging_8hpp.html  | http://wiki.ros.org/rosconsole              |
