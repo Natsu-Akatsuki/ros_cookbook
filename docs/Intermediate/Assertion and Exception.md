@@ -1,28 +1,25 @@
 # Assertion and Exception
 
-# Usage
-
 ## Assertion
 
-```cpp
-// >>> ROS1 >>>
-ROS_ASSERT(pcl_in.size() < 400000);
+| ROS2                                                         | ROS1                                |
+| ------------------------------------------------------------ | ----------------------------------- |
+| #include "rcpputils/asserts.hpp"<br/>rcpputils::assert_true(pcl_in.size() < 400000); | ROS_ASSERT(pcl_in.size() < 400000); |
 
-// >>> ROS2 >>>
-#include "rcpputils/asserts.hpp"
-rcpputils::assert_true(pcl_in.size() < 400000);
-```
+## Type
+
+| ROS2                                                        | ROS1                                                        |
+| ----------------------------------------------------------- | ----------------------------------------------------------- |
+| `const char *name = rosidl_generator_traits::name<MsgT>();` | `const char *name = ros::message_traits::datatype<MsgT>();` |
 
 ## Exception
 
-```cpp
-// >>> ROS1 >>>
-ros::Exception
+| ROS2(C++)                      | ROS(C++)       |
+|:-------------------------------|:---------------|
+| rclcpp::ParameterTypeException | ros::Exception |
 
-// >>> ROS2 >>>
-rclcpp::ParameterTypeException
-```
+## Reference
 
-# Reference
-
-- cpp exception for [ROS1](http://wiki.ros.org/roscpp/Overview/Exceptions)
+| 摘要     | ROS2 | ROS1                                           |
+| -------- | ---- | ---------------------------------------------- |
+| 官方教程 | TODO | http://wiki.ros.org/roscpp/Overview/Exceptions |
