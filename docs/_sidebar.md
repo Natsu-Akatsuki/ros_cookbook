@@ -10,7 +10,7 @@
     - [Interface](Beginner/Interface.md)
     - [Launch](Beginner/Launch.md)
     - [Logger](Beginner/Logger.md)
-    - [Network](Beginner/Network.md)
+    - [Network Communication](Beginner/Network.md)
     - [Node and Component](Beginner/Node%20and%20Component.md)
     - [Parameter Server](Beginner/Parameter%20Server.md)
     - [Record](Beginner/Record.md)

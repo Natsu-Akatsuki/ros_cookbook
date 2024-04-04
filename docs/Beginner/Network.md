@@ -1,6 +1,14 @@
-# Network
+# Network Communication
 
-## ROS1
+## CLI
+
+<!-- tabs:start -->
+
+#### **ROS2**
+
+TODO
+
+#### **ROS1**
 
 ```bash
 # 主机配置
@@ -10,6 +18,79 @@ $ export ROS_MASTER_URI=http://<master_machine_ip>:11311
 $ export ROS_MASTER_URI=http://<master_machine_ip>:11311
 ```
 
+<!-- tabs:end -->
+
+## Usage
+
+<details>
+    <summary>:wrench: <b>用例 1：</b>
+        实现主机和容器的 ROS 通信
+    </summary>
+
+<!-- tabs:start -->
+
+#### **ROS2**
+
+```bash
+# 已测试如下组合
+# 主机 Noetic 和 容器 Noetic
+# 主机 Noetic 和 容器 Melodic
+
+（主机）$ docker run -it --net=host --rm <镜像名>
+
+# 用例：主机和容器端可互换
+（主机）$ roscore
+（主机）$ rosrun roscpp_tutorials talker
+（容器）$ rosrun roscpp_tutorials listener
+```
+
+#### **ROS1**
+
+```bash
+# 测试环境（humble）
+
+# 不需要 --ipc=host --net=host --pid=host -v /dev/shm:/dev/shm
+（主机）$ docker run -it --net=host --rm <镜像名>
+
+# 安装依赖（可互相切换）
+$ sudo apt install ros-${ROS_DISTRO}-rmw-connextdds
+$ RMW_IMPLEMENTATION=rmw_connextdds ros2 run demo_nodes_cpp talker
+$ RMW_IMPLEMENTATION=rmw_connextdds ros2 run demo_nodes_cpp listener
+
+# 实测如下 DDS 不起作用
+$ sudo apt install ros-${ROS_DISTRO}-rmw-fastrtps-cpp
+$ RMW_IMPLEMENTATION=rmw_fastrtps_cpp ros2 run demo_nodes_cpp talker
+$ RMW_IMPLEMENTATION=rmw_fastrtps_cpp ros2 run demo_nodes_cpp listener
+
+$ sudo apt install ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
+$ RMW_IMPLEMENTATION=rmw_cyclonedds_cpp ros2 run demo_nodes_cpp talker
+$ RMW_IMPLEMENTATION=rmw_cyclonedds_cpp ros2 run demo_nodes_cpp listener
+
+# 缺乏可用证书
+$ RMW_IMPLEMENTATION=rmw_gurumdds_cpp ros2 run demo_nodes_cpp talker
+$ RMW_IMPLEMENTATION=rmw_gurumdds_cpp ros2 run demo_nodes_cpp listener
+```
+
+<!-- tabs:end -->
+
+实测 ROS1 和 ROS2 都不需要如下 Dockefile 配置
+
+```dockerfile
+# Dockerfile
+ARG USER_NAME=<用户名>
+RUN useradd ${USER_NAME} -m -G sudo -u 1000 -s /bin/bash && yes ${USER_NAME} | passwd ${USER_NAME}
+USER ${USER_NAME}
+```
+
+已参考资料：
+
+- [ROS2 topics on Docker detected by host but can't subscribe](https://github.com/eProsima/Fast-DDS/issues/2956)
+
+</details>
+
 ## Reference
 
-- Official tutorial: [ROS1](http://wiki.ros.org/ROS/NetworkSetup), [ROS2](https://docs.ros.org/en/rolling/Concepts/About-Domain-ID.html)
+| 摘要   | ROS2                                                          | ROS1                                 |
+|------|---------------------------------------------------------------|--------------------------------------|
+| 官方教程 | https://docs.ros.org/en/rolling/Concepts/About-Domain-ID.html | http://wiki.ros.org/ROS/NetworkSetup |
+

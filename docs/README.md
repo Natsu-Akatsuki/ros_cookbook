@@ -21,7 +21,7 @@
 - [Interface](Beginner/Interface.md): How to use ROS interface (e.g. msg, srv, action)
 - [Launch](Beginner/Launch.md): How to use launch file
 - [Logger](Beginner/Logger.md): How to use logger
-- [Network](Beginner/Network.md): How to implement cross-computer communication
+- [Network Communication](Beginner/Network.md): How to implement cross-computer communication
 - [Node and Component](Beginner/Node%20and%20Component.md): How to write a basic ROS node and component
 - [Parameter Server](Beginner/Parameter%20Server.md): How to use parameter server
 - [Record](Beginner/Record.md): How to record and replay ROS interface
@@ -122,6 +122,7 @@
 - [x] 2023.07.24-2023.07.31 修订所有文档
 - [ ] 追加 giscus 评论系统
 - [ ] 参考 ROS2 官网文档设计目录
+- [ ] 设置复制时自动移除 $ 和 # 等前缀符号
 
 ## Contributors
 
