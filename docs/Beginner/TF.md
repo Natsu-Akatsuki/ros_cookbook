@@ -1,8 +1,6 @@
 # Transform
 
-## Usage
-
-### Listen
+## Listen
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -207,7 +205,7 @@ while not rospy.is_shutdown():
 
 </details>
 
-### Publish
+## Publish
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -313,19 +311,6 @@ def generate_launch_description():
 
 <!-- tabs:end -->
 
-![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20220312094230162.png ':size=150 LiDAR to camera')
-
-常用的 TF：
-
-|                             场景                             | TF 变换（角度） |                          基变换矩阵                          |                             备注                             |
-| :----------------------------------------------------------: | :-------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-|                  LiDAR 系到相机系的基体变换                  |   -90，0，-90   | $\begin{bmatrix} 0 & 0 & 1 \\ -1 & 0 & 0 \\ 0 & -1 & 0\end{bmatrix}$ | LiDAR_to_camera（to-> go to 动态，LiDAR（父/根系），camera（子系） |
-| [LiDAR 系到 LOAM  系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch) |    90，0，90    |                                                              |    LeGO-LOAM 的 camera 指的是 LOAM 系（x 左，y 上，z 前）    |
-| [LOAM 系到 LiDAR 系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch) |   -90，-90，0   |                                                              |              LeGO-LOAM 的 camera 指的是 LOAM 系              |
-|                 相机系到激光雷达系的基体变换                 |                 |                                                              |                              —                               |
-
-![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20230727222925721.png ':size=100 LiDAR to LOAM（依然是右手系，保证 z 指向前）')
-
 > [!note] 如何快速计算基变换矩阵？
 >
 > 将旧基在新基下的列向量表征矩阵（基使用一维行向量）
@@ -347,7 +332,6 @@ def generate_launch_description():
 ```
 
 </details>
-
 
 <details>
     <summary>:wrench: <b>用例 4：</b>
@@ -377,35 +361,12 @@ static_transformStamped.transform.rotation.w = quat.w();
 static_broadcaster_.sendTransform(static_transformStamped);    
 ```
 
-</details>
+</details>	
 
-### Time
-
-ROS2 中定义了 TF 类 的时间戳类型
-
-|  ROS1(C++)   |                  ROS2(C++)                   |                       Usage                       |
-|:------------:|:--------------------------------------------:|:-------------------------------------------------:|
-| ros::Time(0) |              tf2::TimePointZero              | 取缓存中最新的TF<br />tfBuffer.lookupTransform(..., 时间戳) |
-|      —       | tf2::TimePoint(std::chrono::milliseconds(0)) |                         —                         |
-
-```cpp
-// ROS2 内置时间戳类转为 TF 时间戳类
-tf2::TimePoint tf2_ros::fromMsg	(const builtin_interfaces::msg::Time & time_msg)	
-```
-
-### Others
+## Others
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
-        [ WARN] TF_REPEATED_DATA ignoring data with redundant timestamp for frame <...> at time <...> according to authority unknown_publisher
-    </summary>
-
-字面意思，同一个 TF（时间戳、坐标系均相同）重复发布了两次，出现这种问题时注意查看发布的 TF 的时间戳
-
-</details>
-
-<details>
-    <summary>:wrench: <b>用例 2：</b>
         将欧拉角转换为四元数（Python）
     </summary>
 
@@ -432,10 +393,101 @@ with np.printoptions(precision=2, suppress=True):
 
 </details>
 
+## FAQ
+
+<details>
+    <summary>:question: <b>问题 1：</b>
+        如何理解 tf_prefix？
+    </summary>
+
+[tf_prefix 是 ROS 的参数](https://wiki.ros.org/geometry/CoordinateFrameConventions#geometry.2BAC8-CoordinateFrameConventions.2BAC8-Naming.tf_prefix)（parameter），使用 [tf_prefix](http://wiki.ros.org/geometry/CoordinateFrameConventions) 后，会修饰 frame_name，得到`/[tf_prefix/]frame_name`
+
+参考资料：
+
+1. https://wiki.ros.org/tf/Theory
+2. https://wiki.ros.org/tf2
+3. https://wiki.ros.org/tf2/Migration: Anyone using the tf::Transformer interface will have the "/" stripped from the frame_id before it is passed to tf2 under the hood.
+
+</details>
+
+<details>
+    <summary>:question: <b>问题 2：</b>
+        [ WARN] TF_REPEATED_DATA ignoring data with redundant timestamp for frame <...> at time <...> according to authority unknown_publisher
+    </summary>
+
+字面意思，同一个 TF（时间戳、坐标系均相同）重复发布了两次，出现这种问题时注意查看发布的 TF 的时间戳
+
+</details>
+
+## Usage
+
+<details>
+    <summary>:wrench: <b>用例 1：</b>
+        <a href="https://github.com/rkoyama1623/rocky_tf_monitor">找到 frame_id 中含 "/" 的节点</a>
+    </summary>
+
+步骤 1：构建测试文件
+
+```xml
+
+<launch>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="lidar1_to_camera1" args="0, 0, 1, -1.570795, 0, -1.570795 lidar1 camera1 "/>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="lidar2_to_camera2" args="0, 0, 1, -1.570795, 0, -1.570795 /lidar2 /camera2 "/>
+    <node pkg="tf" type="static_transform_publisher" name="lidar3_to_camera3" args="0, 0, 1, -1.570795, 0, -1.570795 lidar3 camera3 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="lidar4_to_camera4" args="0, 0, 1, -1.570795, 0, -1.570795 /lidar4 /camera4 100"/>
+</launch>
+```
+
+步骤 2：执行程序 rocky_tf_monitor.py
+
+![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/2024-04-06_15-47.png)
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 2：</b>
+        使用 rocky_tf_monitor 诊断坐标系树是否错误：一个坐标系是否有多个父坐标系
+    </summary>
+
+![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20240406181137466.png)
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 3：</b>
+        Rviz 中 Failed to transform from frame [/A] to frame [A] 或 Failed to transform from frame [/A] to frame [B]
+    </summary>
+
+字面意思
+
+情况 1：frame A 和 /A 是不同的坐标系，需移除 frame A 中的前导符号 "/" \
+情况 2：已知发布的点云的 frame_id 为 /A，Rviz 中 Fixed frame 为 B，则可视化时需要 /A -> B 的坐标系变换。尽管在程序中提供了 /A -> /B 的坐标系变换，但 TF2 会自动移除第一个前导符 "/"，因此实际上发布的是 A->B 的坐标系变换。可以将点云的 frame_id 改为 A。
+
+</details>
+
 ## Reference
 
-- [ROS Coordinate Standard](https://www.ros.org/reps/rep-0103.html)
-- ROS Listener Official Tutorial: [ROS1](http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20listener%20%28C%2B%2B%29), [ROS2](https://docs.ros.org/en/iron/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Listener-Cpp.html)
-- ROS2 API Document: [TF2_ROS](https://docs.ros2.org/latest/api/tf2_ros/), [TF2](https://docs.ros2.org/latest/api/tf2/)
+| 摘要   | ROS2                                                                                    | ROS1                                   |
+|------|-----------------------------------------------------------------------------------------|----------------------------------------|
+| 规范   | 无                                                                                       | https://www.ros.org/reps/rep-0103.html |
+| 官方教程 | https://docs.ros.org/en/iron/Tutorials/Intermediate/Tf2/Writing-A-Tf2-Listener-Cpp.html | https://wiki.ros.org/tf2/Tutorials     |
+| API  | https://docs.ros2.org/latest/api/tf2_ros/                                               | https://docs.ros2.org/latest/api/tf2/  |
+
 - [Blog: Transforms in ROS](https://nu-msr.github.io/me495_site/lecture05_tf.html)
 - [ROS TF, Whoever wrote the Python API, F**ked up the concepts](https://www.hepeng.me/ros-tf-whoever-wrote-the-python-tf-api-f-ked-up-the-concept/)
+
+## Coordiniate
+
+| LiDAR to camera                                                                                                       | LiDAR to LOAM                                                                                                                        |
+|-----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| ![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20220312094230162.png ':size=150 LiDAR to camera') | ![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20230727222925721.png ':size=100 LiDAR to LOAM（依然是右手系，保证 z 指向前）') |
+
+常用的 TF：
+
+|                                                          场景                                                          | TF 变换（角度） |                                 基变换矩阵                                  |                          备注                          |
+|:--------------------------------------------------------------------------------------------------------------------:|:---------:|:----------------------------------------------------------------------:|:----------------------------------------------------:|
+|                                                   LiDAR 系到相机系的基体变换                                                   | -90，0，-90 | $$\begin{bmatrix} 0 & 0 & 1 \\ -1 & 0 & 0 \\ 0 & -1 & 0\end{bmatrix}$$ | LiDAR_to_camera（to-> go to 动态，LiDAR（父/根系），camera（子系） |
+| [LiDAR 系到 LOAM  系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch) |  90，0，90  |                                                                        |      LeGO-LOAM 的 camera 指的是 LOAM 系（x 左，y 上，z 前）      |
+| [LOAM 系到 LiDAR 系的基体变换](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM/blob/master/LeGO-LOAM/launch/run.launch)  | -90，-90，0 |                                                                        |            LeGO-LOAM 的 camera 指的是 LOAM 系             |
+|                                                    相机系到激光雷达系的基体变换                                                    |           | $$\begin{bmatrix} 0 & -1 & 0 \\ 0 & 0 & -1 \\ 1 & 0 & 0\end{bmatrix}$$ |                          —                           |
+
