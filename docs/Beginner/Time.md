@@ -8,9 +8,9 @@
 
 如下代码块只适用于
 
-| 功能    | 代码块（ROS2）                                                                                                                                      |
-|-------|------------------------------------------------------------------------------------------------------------------------------------------------|
-| 设置时钟源 | `rclcpp::Clock ros_clock{RCL_ROS_TIME};`<br/>`rclcpp::Clock system_clock{RCL_SYSTEM_TIME};`<br/>`rclcpp::Clock steady_clock{RCL_STEADY_TIME};` |
+| 功能       | 代码块（ROS2）                                               |                                                              |
+| ---------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 设置时钟源 | `rclcpp::Clock ros_clock{RCL_ROS_TIME};`<br/>`rclcpp::Clock system_clock{RCL_SYSTEM_TIME};`<br/>`rclcpp::Clock steady_clock{RCL_STEADY_TIME};` | `from rclpy.clock import Clock, ROSClock`<br />`ROSClock()`<br />Clock() |
 
 ## Time
 
@@ -52,18 +52,24 @@ ROS 2 没有将双精度浮点型（以秒为单位）的时间戳转换为 Time
 
 ### RViz
 
-| ROS2                           | ROS1                |
-|--------------------------------|---------------------|
-| `context_->getClock()->now();` | `ros::Time::now();` |
+| ROS2                                                         | ROS1                                      |
+| ------------------------------------------------------------ | ----------------------------------------- |
+| `context_->getClock()->now();`                               | // 默认是ROS时间<br />`ros::Time::now();` |
+| // 没有无参构造函数，近似等价于<br />rclcpp::Time(std::int64_t(0),  RCL_ROS_TIME) | // 默认是ROS时间<br />ros::Time()         |
 
-### TF2
+### TF
 
-获取最新的 TF，具体参考 [Here](https://docs.ros.org/en/foxy/Tutorials/Intermediate/Tf2/Learning-About-Tf2-And-Time-Cpp.html)
+从缓存中获取最新的 TF，具体参考 [Here](https://docs.ros.org/en/foxy/Tutorials/Intermediate/Tf2/Learning-About-Tf2-And-Time-Cpp.html)
 
-| ROS2(C++)                                                                        | ROS(C++)       |
-|:---------------------------------------------------------------------------------|:---------------|
-| `tf2::TimePointZero`<br />                                                       | `ros::Time(0)` |
+| ROS2(C++)                                                    | ROS(C++)       |
+| :----------------------------------------------------------- | :------------- |
+| `tf2::TimePointZero`<br /><br />`tf2::TimePoint(std::chrono::milliseconds(0))` | `ros::Time(0)` |
 | `rclcpp::Time(0, 0, this->get_clock()->get_clock_type())`<br />`rclcpp::Time(0)` | `ros::Time(0)` |
+
+```cpp
+// ROS2 内置时间戳类转为 TF 时间戳类
+tf2::TimePoint tf2_ros::fromMsg	(const builtin_interfaces::msg::Time & time_msg)
+```
 
 ## Duration
 
