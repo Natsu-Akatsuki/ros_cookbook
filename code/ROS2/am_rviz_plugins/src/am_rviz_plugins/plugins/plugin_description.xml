@@ -1,0 +1,42 @@
+<library path="rviz_plugins">
+  <class name="rviz_plugins/LogPanels"
+         type="rviz_plugins::LogPanels"
+         base_class_type="rviz_common::Panel">
+    <description>rviz panel for 3D object detection</description>
+  </class>
+  <class name="rviz_plugins/LogDisplay"
+         type="rviz_plugins::LogDisplay"
+         base_class_type="rviz_common::Display">
+    <description>...</description>
+  </class>
+  <class name="rviz_plugins/PolarGridDisplay"
+         type="rviz_plugins::PolarGridDisplay"
+         base_class_type="rviz_common::Display">
+    <description>...</description>
+  </class>
+  <class name="rviz_plugins/OverlayMenuDisplay"
+         type="rviz_plugins::OverlayMenuDisplay"
+         base_class_type="rviz_common::Display">
+    <description>...</description>
+  </class>
+  <class name="rviz_plugins/BoundingBoxArrayDisplay"
+         type="rviz_plugins::BoundingBoxArrayDisplay"
+         base_class_type="rviz_common::Display">
+    <description>...</description>
+  </class>
+  <class name="rviz_plugins/BoundingBoxDisplay"
+         type="rviz_plugins::BoundingBoxDisplay"
+         base_class_type="rviz_common::Display">
+    <description>...</description>
+  </class>
+  <class name="rviz_plugins/PointCloud3Display"
+         type="rviz_plugins::PointCloud3Display"
+         base_class_type="rviz_common::Display">
+    <description>...</description>
+  </class>
+  <class name="rviz_plugins/BEVController"
+         type="view_controllers::BEVController"
+         base_class_type="rviz_common::ViewController">
+    <description>...</description>
+  </class>
+</library>

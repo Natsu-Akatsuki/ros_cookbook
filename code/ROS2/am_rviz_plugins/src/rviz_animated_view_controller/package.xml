@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>rviz_animated_view_controller</name>
+  <version>0.2.0</version>
+  <description>A rviz view controller featuring smooth transitions.</description>
+  <author email="adamleeper@gmail.com">Adam Leeper</author>
+  <maintainer email="evanflynn.msu@gmail.com">Evan Flynn</maintainer>
+
+  <license>BSD</license>
+  <url type="website">http://ros.org/wiki/rviz_animated_view_controller</url>
+  <url type="repository">https://github.com/ros-visualization/rviz_animated_view_controller</url>
+  <url type="bugtracker">https://github.com/ros-visualization/rviz_animated_view_controller/issues</url>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
+  <build_depend>ament_cmake_auto</build_depend>
+
+  <depend>rclcpp</depend>
+  <depend>opengl</depend>
+  <depend>eigen</depend>
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>view_controller_msgs</depend>
+  <depend>rviz_common</depend>
+  <depend>rviz_default_plugins</depend>
+  <depend>rviz_rendering</depend>
+  <depend>rviz_visual_tools</depend>
+  <depend>plugin_lib</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>
