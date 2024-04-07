@@ -2,7 +2,7 @@
 
 ## Experience
 
-由于对多个包打包成 debian 包比较麻烦，因此在不考虑复用性的情况下，倾向于将多个包集为一个功能包来打包（如将消息类型包写在功能包中）
+因为将多个 ROS 功能包打包成 debian 包比较麻烦，所以在不考虑复用性的情况下，倾向于将多个包集成为一个功能包来打包（如将消息类型包写在功能包中）
 
 ## Usage
 
@@ -49,9 +49,41 @@ $ catkin_create_pkg <MY_META_PACKAGE> --meta
 ```bash
 # 安装相关
 $ sudo apt install python3-bloom python3-rosdep fakeroot debhelper dh-python
+
+# 如果以前没有初始化过 rosdep
+$ sudo rosdep init
+
+# 更新 rosdep
+$ rosdep update
 ```
 
-步骤 2：打包
+步骤 2：修改 CMakeLists.txt
+
+<!-- tabs:start -->
+
+#### **[ROS2](https://docs.ros.org/en/foxy/How-To-Guides/Developing-a-ROS-2-Package.html)**
+
+#### **ROS1**
+
+```cmake
+# 如果需要打包 C++ 目标文件
+install(TARGETS 目标文件名
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+
+# 如果需要打包 Python 脚本
+catkin_install_python(PROGRAMS scripts/<脚本名>
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}	 # 安装到 /opt/ros/lib/包名/bin
+  # DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION} # 安装到 /opt/ros/版本号/bin
+)
+```
+
+<!-- tabs:end -->
+
+
+步骤 3：打包
 
 ```bash
 $ cd <含 package.xml 的目录>
@@ -68,33 +100,23 @@ $ fakeroot debian/rules binary
 
 <details>
     <summary>:wrench: <b>用例 5：</b>
-        对于 Python 的打包，如何写 CMakeLists.txt 文件？
+        <a href="https://answers.ros.org/question/280213/generate-deb-from-dependent-res-package-locally/">如何打包含ROS 包（该 ROS 包含不在 ROS 仓库的依赖）</a>
     </summary>
 
-<!-- tabs:start -->
-
-#### **ROS2**
-
-#### **ROS1**
-
-```
-catkin_install_python(PROGRAMS
-   scripts/<脚本名>
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}	 # 安装到 /opt/ros/lib/包名/bin
-  # DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION} # 安装到 /opt/ros/版本号/bin
-)
-```
-
-<!-- tabs:end -->
+参考 [4. 功能包相互依赖关系解决](https://zhuanlan.zhihu.com/p/578951132)
 
 </details>
 
 <details>
     <summary>:wrench: <b>用例 6：</b>
-        <a href="https://answers.ros.org/question/280213/generate-deb-from-dependent-res-package-locally/">如何打包含ROS 包（该 ROS 包含不在 ROS 仓库的依赖）</a>
+        <a href="https://github.com/ros/rosdistro/blob/master/rosdep/base.yaml">如何查找填写在 package.xml 的 rosdep key？</a>
     </summary>
+基于 https://github.com/ros/rosdistro/blob/master/rosdep/base.yaml 中的信息，将对应的 key 填写到 package.xml 中
 
-或直接参考此处的 [4. 功能包相互依赖关系解决](https://zhuanlan.zhihu.com/p/578951132)
+| rosdep key    | Ubuntu        |
+|---------------|---------------|
+| eigen         | libeigen3-dev |
+| libopencv-dev | libopencv-dev |
 
 </details>
 
