@@ -13,7 +13,7 @@ document.addEventListener('copy', function (event) {
         }
         if (commonAncestor.tagName === 'CODE' && commonAncestor.classList.contains('lang-bash')) {
             // 删除粘贴内容里开头的 $ 或 # 或 () $ 或 () #
-            modifiedText += range.toString().replace(/^[^$#]*([$#])/gm, '');
+            modifiedText += range.toString().replace(/^[$#]?/gm, '');
         } else {
             // 如果不是来自于指定的标签，则保留原始文本
             modifiedText += range.toString();
