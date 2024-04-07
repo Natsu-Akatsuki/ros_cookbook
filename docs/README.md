@@ -31,7 +31,7 @@
 ### :student: Intermediate
 
 - [DDS](Intermediate/DDS.md)
-- [Deployment](Intermediate/Deployment.md)
+- [Deployment](Intermediate/Deployment.md): How to create a deb package
 - [Assertion and Exception](Intermediate/Assertion%20and%20Exception.md)
 - [Plugins](Intermediate/Plugins.md)
 - [Signal](Intermediate/Signal.md): How to terminate a multi-thread process
