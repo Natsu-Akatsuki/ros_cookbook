@@ -39,6 +39,7 @@
 ### :hammer_and_wrench: Software and Tools
 
 - [Blender](Software%20and%20Tools/Blender.md)
+- [Foxglove Studio](Software%20and%20Tools%2FFoxglove%20Studio.md)
 - [Gazebo](Software%20and%20Tools/Gazebo.md)
 - [PlotJuggler](Software%20and%20Tools/PlotJuggler.md)
 - [RViz](Software%20and%20Tools/RViz.md)
