@@ -106,6 +106,7 @@ ament_auto_add_library(<target_name> <sources>)
 ament_target_dependencies(<target_name> <pkg_name|library_name>)
   
 # >>> 导出相关的配置文件和进行安装 >>>
+# 如果需要被其他包调用，则需要加这一句
 ament_auto_package(
   INSTALL_TO_SHARE
   launch
@@ -227,5 +228,9 @@ target_link_libraries(route_handler ${catkin_LIBRARIES})
 
 ## Reference
 
-- CMakeLists.txt 官方文档 for [ROS1](https://wiki.ros.org/catkin/CMakeLists.txt)
-- [Migrating from format 1 to format 2 for package.xml](https://docs.ros.org/en/melodic/api/catkin/html/howto/format2/migrating_from_format_1.html#migrating-from-format1-to-format2)
+| 摘要                  | ROS2                                                                      | ROS1                                                                                             |
+|---------------------|---------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| CMakeLists.txt 官方文档 | https://docs.ros.org/en/iron/How-To-Guides/Ament-CMake-Documentation.html | https://wiki.ros.org/catkin/CMakeLists.txt                                                       |
+| 宏变量                 | TODO                                                                      | https://docs.ros.org/en/groovy/api/catkin/html/dev_guide/generated_cmake_api.html#catkin-package |
+
+- [package.xml from format 1 to format 2](https://docs.ros.org/en/melodic/api/catkin/html/howto/format2/migrating_from_format_1.html#migrating-from-format1-to-format2)
