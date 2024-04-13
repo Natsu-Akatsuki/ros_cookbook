@@ -538,6 +538,18 @@ int main(int argc, char** argv)
 
 <!-- tabs:start -->
 
+#### **ROS1(C++)**
+
+```cpp
+// >>> 客户端 >>>
+ros::ServiceClient client_;
+client_ = pnh_.serviceClient<服务类型>(<服务名>);
+
+// >>> 服务端 >>>
+ros::ServiceServer service_;
+service_ = pnh_.advertiseService(<服务类型>, <回调函数>);
+```
+
 #### **ROS2(C++)**
 
 ROS2 倾向于使用智能指针
@@ -552,24 +564,11 @@ rclcpp::Service<包名::srv::服务名>::SharedPtr service_;
 service_ = node->create_service<服务类型>(<服务名>, &回调函数);
 ```
 
-#### **ROS1(C++)**
-
-```cpp
-// >>> 客户端 >>>
-ros::ServiceClient client_;
-client_ = pnh_.serviceClient<服务类型>(<服务名>);
-
-// >>> 服务端 >>>
-ros::ServiceServer service_;
-service_ = pnh_.advertiseService(<服务类型>, <回调函数>);
-```
-
 #### **ROS1(Python)**
 
 ```python
 # >>> 客户端 >>>
-rospy.wait_for_service('服务名')
-service = rospy.ServiceProxy('服务名', 服务类型)
+# 无，详看调用部分
 
 # >>> 服务端 >>>
 rospy.Service('服务名', 服务类型, 回调函数)
@@ -628,15 +627,15 @@ while (!client->wait_for_service(1s)) {
 
 不能仿效 C++的形式，尽管可以指定 timeout，但它是直接抛出异常 ROSException，而非返回 true/false
 
+[//]: # (@formatter:off)
 ```python
 
 import rospy
 
-rospy.init_node( < 节点名 >)
-rospy.wait_for_service( < 服务名 >)
+rospy.init_node(<节点名>)
+rospy.wait_for_service(<服务名>)
 ```
-
-<!-- tabs:end -->
+[//]: # (@formatter:on)
 
 #### **ROS2(Python)**
 
@@ -648,6 +647,8 @@ while not self.cli.wait_for_service(timeout_sec=1.0):
         return
     node.get_logger().info("Waiting for service... [{}]".format(module_name))
 ```
+
+<!-- tabs:end -->
 
 </details>
 
@@ -751,7 +752,11 @@ if (rclcpp::spin_until_future_complete(node, result) ==
 
 #### **ROS1(Python)**
 
-TODO
+```python
+# 客户端（使用如下代码时，无需调用 rospy.init_node()）
+rospy.wait_for_service('服务名')  # 调用服务
+service = rospy.ServiceProxy('服务名', 服务类型)  # 阻塞直到有服务返回
+```
 
 #### **ROS2(Python)**
 
@@ -820,24 +825,34 @@ rosidl_generator_traits::data_type<am_rviz_plugins_msgs::OverlayMenu>
 
 </details>
 
-## FAQ
-
-## Supplementary materials
+## Reference
 
 ### Topic
 
-- Official demo for [ROS1](http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29) and [ROS2](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html)
-- Topic statistics for [ROS1](https://wiki.ros.org/Topics#Topic_statistics) and [ROS2](https://docs.ros.org/en/humble/Concepts/About-Topic-Statistics.html)
-- Sync demo for [ROS1](http://wiki.ros.org/message_filters)
-
-### Message
-
-- Official document for [ROS1](https://wiki.ros.org/msg) and [ROS2](https://docs.ros.org/en/iron/Concepts/About-ROS-Interfaces.html#)
-- [Autoware.Universe name guidelines](https://autowarefoundation.github.io/autoware-documentation/main/contributing/coding-guidelines/ros-nodes/message-guidelines/)
-- [Autowarw adapting-message-definitions](https://github.com/tier4/AutowareArchitectureProposal.proj/blob/main/docs/developer_guide/knowhow/PortingToROS2.md#adapting-message-definitions)
+| 摘要             | ROS2                                                         | ROS1                                                         |
+| ---------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 官方文档（C++）  | https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html | http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29 |
+| Topic statistics | https://wiki.ros.org/Topics#Topic_statistics                 | https://docs.ros.org/en/humble/Concepts/About-Topic-Statistics.html |
+| 消息同步         | http://wiki.ros.org/message_filters                          | 无                                                           |
 
 ### Service
 
-- Official C++ demo：[ROS1](http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28c%2B%2B%29), [ROS2](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Service-And-Client.html)
-- Official Python demo：[ROS1](http://wiki.ros.org/rospy/Overview/Services), [ROS2](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Service-And-Client.html)
-- [Services between ROS1 and ROS2](https://roboticsbackend.com/ros1-vs-ros2-practical-overview/)
+| 摘要               | ROS2                                                         | ROS1                                                         |
+| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 官方文档（C++）    | https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Service-And-Client.html | http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28c%2B%2B%29 |
+| 官方文档（Python） | https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Service-And-Client.html | http://wiki.ros.org/rospy/Overview/Services                  |
+
+### Message
+
+| 摘要     | ROS2                                                         | ROS1                     |
+| -------- | ------------------------------------------------------------ | ------------------------ |
+| 官方文档 | https://docs.ros.org/en/iron/Concepts/About-ROS-Interfaces.html# | https://wiki.ros.org/msg |
+
+- [Autoware.Universe name guidelines](https://autowarefoundation.github.io/autoware-documentation/main/contributing/coding-guidelines/ros-nodes/message-guidelines/)
+- [Autowarw adapting-message-definitions](https://github.com/tier4/AutowareArchitectureProposal.proj/blob/main/docs/developer_guide/knowhow/PortingToROS2.md#adapting-message-definitions)
+
+[//]: # ()
+
+[//]: # (| duration | builtin_interfaces/Duration |      |)
+
+[//]: # (| -------- | --------------------------- | ---- |)
