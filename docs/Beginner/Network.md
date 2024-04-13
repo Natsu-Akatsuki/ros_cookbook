@@ -1,6 +1,11 @@
 # Network Communication
 
-## CLI
+## Usage
+
+<details>
+    <summary>:wrench: <b>用例 1：</b>
+        实现主机与主机的 ROS 通信
+    </summary>
 
 <!-- tabs:start -->
 
@@ -11,19 +16,24 @@ TODO
 #### **ROS1**
 
 ```bash
-# 主机配置
-$ export ROS_MASTER_URI=http://<master_machine_ip>:11311
+# 将如下内容添加到 ~/.bashrc
 
-# 从机配置
-$ export ROS_MASTER_URI=http://<master_machine_ip>:11311
+# >>> 主机配置 >>>
+# 获取主机的 IP 地址
+ROS_MASTER_IP=`hostname -I | awk '{print $1}'`
+export ROS_MASTER_URI=http://${ROS_MASTER_IP}:11311
+
+# >>> 从机配置 >>>
+# ROS_MASTER_IP：对应为主机的 IP 地址
+export ROS_MASTER_URI=http://<ROS_MASTER_IP>:11311
 ```
 
 <!-- tabs:end -->
 
-## Usage
+</details>
 
 <details>
-    <summary>:wrench: <b>用例 1：</b>
+    <summary>:wrench: <b>用例 2：</b>
         实现主机和容器的 ROS 通信
     </summary>
 
@@ -73,7 +83,7 @@ $ RMW_IMPLEMENTATION=rmw_gurumdds_cpp ros2 run demo_nodes_cpp listener
 
 <!-- tabs:end -->
 
-实测 ROS1 和 ROS2 都不需要如下 Dockefile 配置
+实测 ROS1 和 ROS2 都不需要如下 Dockerfile 配置
 
 ```dockerfile
 # Dockerfile
@@ -92,5 +102,4 @@ USER ${USER_NAME}
 
 | 摘要   | ROS2                                                          | ROS1                                 |
 |------|---------------------------------------------------------------|--------------------------------------|
-| 官方教程 | https://docs.ros.org/en/rolling/Concepts/About-Domain-ID.html | http://wiki.ros.org/ROS/NetworkSetup |
-
+| 网络配置 | https://docs.ros.org/en/rolling/Concepts/About-Domain-ID.html | http://wiki.ros.org/ROS/NetworkSetup |
