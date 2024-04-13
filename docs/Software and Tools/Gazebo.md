@@ -45,9 +45,7 @@ $ sudo apt remove gz-garden && sudo apt autoremove
 
 <!-- tabs:end -->
 
-## Usage
-
-### Environment variable
+## Environment Variable
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -64,7 +62,7 @@ $ export GAZEBO_MODEL_PATH=<模型位置>
 
 </details>
 
-### File
+## File
 
 |                    文件格式                    |        编辑或可视化工具         |                   备注                    |
 |:------------------------------------------:|:-----------------------:|:---------------------------------------:|
@@ -133,7 +131,7 @@ $ xacro model.xacro > model.urdf
 
 </details>
 
-### Model
+## Model
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -232,7 +230,7 @@ TODO
     </summary>
 </details>
 
-### Visualization
+## Visualization
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -329,7 +327,7 @@ $ sudo dpkg -i foxglove-studio-1.39.0-linux-amd64.deb
 
 </details>
 
-### Plugins
+## Plugins
 
 具体参考 [Here](http://classic.gazebosim.org/tutorials?tut=ros_gzplugins&cat=connect_ros)
 
@@ -358,7 +356,7 @@ $ sudo dpkg -i foxglove-studio-1.39.0-linux-amd64.deb
 
 </details>
 
-### Shortcut
+## Shortcut
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -386,7 +384,7 @@ $ __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia gazebo
 
 </details>
 
-### Others
+## Others
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -466,13 +464,23 @@ $ rosrun map_server map_saver -f <map_name> /map:=/map2d
 
 </details>
 
-## Supplementary materials
+<details>
+    <summary>:wrench: <b>用例 5：</b>
+        <a href="https://github.com/Adlink-ROS/map2gazebo">grid_map to world</a>
+    </summary>
+</details>
 
-- [用 Blender 构建场景级模型](https://www.bilibili.com/video/BV1rT4y1P7HN/)
+<details>
+    <summary>:wrench: <b>用例 6：</b>
+        <a href="https://github.com/navigation-gridmap/gazebo_gridmap_plugin">gazebo to height map (for ROS2)</a>
+    </summary>
+</details>
 
-## Tools
-
-- [Gazebo 模型库](https://app.gazebosim.org/dashboard)
+<details>
+    <summary>:wrench: <b>用例 7：</b>
+        <a href="https://github.com/CyberAgentAILab/pointcloud2gazebo?tab=readme-ov-file">pointcloud to world</a>
+    </summary>
+</details>
 
 ## FAQ
 
@@ -509,10 +517,17 @@ $ git clone https://github.com/osrf/gazebo_models.git --depth=1 ~/.gazebo/models
 
 ## Reference
 
-- Official Document for [Gazebo Sim](https://gazebosim.org/home) and [Gazebo-classic](https://classic.gazebosim.org/)
-- Official Document of URDF: [ROS1](http://wiki.ros.org/urdf/Tutorials)
-- Official Document of ROS: [ROS1](https://classic.gazebosim.org/tutorials?tut=ros_overview#Tutorial:ROSintegrationoverview)
-- [Gazebo API](https://github.com/gazebosim/gazebo-classic/blob/gazebo11/Migration.md)
-- [Ignition API](https://osrf-distributions.s3.amazonaws.com/ign-math/api/1.0.0/namespaceignition.html)
-- [Gazebo-classic -> Gazebo Sim SDF](https://gazebosim.org/api/gazebo/4.3/migrationsdf.html)
-- [了解惯性的作用](https://www.youtube.com/watch?v=sHzC--X0zQE)
+| 摘要           | ROS2                                                                                  | ROS1                                                                                     |
+|--------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| 官方文档         | https://classic.gazebosim.org/tutorials?tut=ros2_overview                             | https://classic.gazebosim.org/tutorials?tut=ros_overview#Tutorial:ROSintegrationoverview |
+| 官方 API       | https://github.com/gazebosim/gazebo-classic/blob/gazebo11/Migration.md                | 无                                                                                        |
+| Ignition API | https://osrf-distributions.s3.amazonaws.com/ign-math/api/1.0.0/namespaceignition.html | 无                                                                                        |
+
+| 摘要   | Gazebo Sim                 | Gazebo-classic                 |
+|------|----------------------------|--------------------------------|
+| 官方文档 | https://gazebosim.org/home | https://classic.gazebosim.org/ |
+
+- URDF 官方文档：http://wiki.ros.org/urdf/Tutorials
+- [惯性属性的作用](https://www.youtube.com/watch?v=sHzC--X0zQE)
+- [用 Blender 构建场景级模型](https://www.bilibili.com/video/BV1rT4y1P7HN/)
+- [Gazebo 模型库](https://app.gazebosim.org/dashboard)
