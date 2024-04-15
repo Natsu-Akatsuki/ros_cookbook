@@ -41,9 +41,11 @@
 - [Blender](Software%20and%20Tools/Blender.md)
 - [Foxglove Studio](Software%20and%20Tools%2FFoxglove%20Studio.md)
 - [Gazebo](Software%20and%20Tools/Gazebo.md)
+- [NoMachine](Software%20and%20Tools/NoMachine.md)
 - [PlotJuggler](Software%20and%20Tools/PlotJuggler.md)
+- [Prompt](Software%20and%20Tools/Prompt.md)
 - [RViz](Software%20and%20Tools/RViz.md)
-- [Tools](Software%20and%20Tools/Tools.md)
+- [Others](Software%20and%20Tools/Others.md)
 
 ### :memo: Others
 
