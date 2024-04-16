@@ -98,6 +98,20 @@ USER ${USER_NAME}
 
 </details>
 
+<details>
+    <summary>:wrench: <b>用例 3：</b>
+        <a href="http://wiki.ros.org/ROS/NetworkSetup">配置多机时间同步（主从模式， 从机时间跟主机对齐）</a>
+    </summary>
+
+```bash
+# 主机
+$ sudo apt install ntp
+# 从机
+$ sudo ntpdate <主机的 IP 地址>
+```
+
+</details>
+
 ## Reference
 
 | 摘要   | ROS2                                                          | ROS1                                 |
