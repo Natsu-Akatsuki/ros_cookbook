@@ -1,6 +1,6 @@
 # Executor and Callback
 
-- 根据[官方设计说明](http://design.ros2.org/articles/changes.html)，ROS1 和 ROS2 的 C++实现中均有单线程模型和多线程模型，而 ROS2 能自行设计颗粒度更细的线程模型
+根据[官方设计说明](http://design.ros2.org/articles/changes.html)，ROS1 和 ROS2 的 C++实现中均有单线程模型和多线程模型，而在 ROS2 中能自行设计颗粒度更细的线程模型
 
 ## Usage
 
@@ -62,6 +62,45 @@ my_subscription = this->create_subscription<Int32>("/topic", rclcpp::SensorDataQ
 ```
 
 <!-- tabs:end -->
+
+</details>
+
+<details>
+    <summary>:wrench: <b>用例 2：</b>
+        使用特定的线程处理特定的消息队列
+    </summary>
+
+
+设置一个专门处理点云回调函数的线程（线程数 = 1），处理 IMU 回调函数和定时器回调函数的线程（线程数 = 内核数）
+
+```cpp
+#include <thread>
+
+// 创建处理 IMU 回调函数和定时器回调函数的线程（线程数 = 内核数 - 1）
+int core_number = std::thread::hardware_concurrency()
+ros::AsyncSpinner spinner(core_number - 1); // Simple constructor. Uses the global callback queue.
+spinner.start();
+
+// >>> 创建一个专门处理点云回调函数的线程 >>>
+// 创建专门接收点云的消息队列和 spinner
+ros::NodeHandle pc_nh;
+ros::CallbackQueue pc_queue;
+// 使所有关联该句柄的订阅回调函数和定时器都走这个回调函数队列，调用 ros::spin() and ros::spinOnce() 时不会处理这部分的回调函数
+pc_nh.setCallbackQueue(&pc_queue)
+ros::Subscriber sub_a = pc_nh.subscribe("/velodyne_points", 1, callBackPointCloud);
+// 为点云回调函数创建一个新的线程
+// 方案一：
+// std::thread pc_spinner_thread([&pc_queue]() {
+//     ros::SingleThreadedSpinner spinner;
+//     spinner.spin(&pc_queue);
+// });
+// pc_spinner_thread.join();
+
+// 方案二：
+ros::AsyncSpinner spinner(1, &pc_queue);
+spinner.start();
+ros::waitForShutdown();
+```
 
 </details>
 
@@ -132,11 +171,11 @@ my_subscription = this->create_subscription<Int32>("/topic", rclcpp::SensorDataQ
         各种队列
     </summary>
 
-|        类型        |                                                                                                                                                                       作用                                                                                                                                                                       |
-|:----------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| subscriber queue | When new messages arrive, they are stored in a queue until ROS gets a chance to execute your callback function. This parameter establishes a maximum number of messages that ROS will store in that queue at one time. If new messages arrive when the queue is full, the oldest unprocessed messages will be dropped to make room. （估计暂未反序列化） |
-| publisher queue  |                                                                               the publisher queue is another queue like callback queue, but the queue is for queuing published message which is filled every time ``publish()`` function is called. （估计暂未进行序列化）                                                                                |
-|  callback queue  |                                                                                                                                                                       —                                                                                                                                                                        |
+|                   类型                    |                  作用                   |
+|:---------------------------------------:|:-------------------------------------:|
+| 订阅器队列<br />（消息队列）<br />subscriber queue |    用于存储将要被回调函数处理的消息；当队列已满，则移除最旧的数据    |
+| 发布器队列<br />（消息队列）<br />publisher queue  | 用于存储 publish() 将要发布的消息；当队列已满，则移除最旧的数据 |
+|       回调函数队列<br />callback queue        |                   —                   |
 
 </details>
 
@@ -144,7 +183,6 @@ my_subscription = this->create_subscription<Int32>("/topic", rclcpp::SensorDataQ
     <summary>:question: <b>问题 8：</b>
         如何解决 ROS1 中 rosbag play 的数据丢包的问题？
     </summary>
-
 方案一：降低数据发布的频率，以适配订阅端回调函数处理数据的速度 \
 方案二：在 ROS 1 中，将订阅器的 queue_size 设得足够大；rosbag play 播放时添加选项 --queue <一个足够大的数>；当 rosbag 准备播放完时，按空格键暂停，避免 rosbag 发布器中的数据停止发布。相关原理猜想为，在 ROS 的设计中，发布器要等自己的数据被订阅器处理（包括回调调用或者因为队列的维护而丢弃）了才发下一个数据。而待发的数据也会放到发布队列中，如果发布队列的数据超出上限时则丢掉最旧的数据。
 
@@ -314,10 +352,19 @@ if __name__ == "__main__":
 
 </details>
 
+<details>
+    <summary>:question: <b>问题 9：</b>
+        <a href="https://wiki.ros.org/roscpp/Overview/Callbacks%20and%20Spinning">什么时候需要构建多个回调函数队列？</a>
+    </summary>
+
+希望处理某些数据时（比如点云）不会阻塞其他的线程；希望创建多个线程，其中一个线程专门用于密集型计算的
+
+</details>
+
 ## Reference
 
-- [精讲多线程之 MultiThreadedSpinner](https://zhuanlan.zhihu.com/p/375418691)
-- [ROS Spinning, Threading, Queuing](https://levelup.gitconnected.com/ros-spinning-threading-queuing-aac9c0a793f)
-- ROSCON: [concurrency (2019)](https://roscon.ros.org/2019/talks/roscon2019_concurrency.pdf)
-
-
+| 摘要                               | 链接                                                                                            |
+|----------------------------------|-----------------------------------------------------------------------------------------------|
+| 精讲多线程之 MultiThreadedSpinner      | https://zhuanlan.zhihu.com/p/375418691                                                        |
+| ROS Spinning, Threading, Queuing | https://levelup.gitconnected.com/ros-spinning-threading-queuing-aac9c0a793f                   |
+| ROSCON（concurrency (2019)）       | https://roscon.ros.org/2019/talks/roscon2019_concurrency.pdf<br />https://vimeo.com/379127709 |

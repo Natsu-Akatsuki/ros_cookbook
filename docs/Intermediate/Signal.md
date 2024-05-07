@@ -145,3 +145,18 @@ int main() {
 ```
 
 </details>
+
+<details>
+    <summary>:question: <b>问题 6：</b>
+        节点中断的相关知识点
+    </summary>
+
+在 bash 启动的 roslaunch 可以被 kill -s 2（键盘中断）中断，这种中断可以让节点顺利退出 \
+使用 kill -s 9 中断节点或 roslaunch 进程可能会导致节点部分程序资源没有被完全回收，无法正常退出。最终表现为即使对应的进程已经关闭，但依然可以通过 `rosnode` 看到该节点（该节点没有从 `rosmaster` 中注销成功），若要通过命令行注销则需要使用 `rosnode cleanup`
+
+- 由于 kill -s 9 或者程序资源没有回收完全的原因，即使对应的进程已经关闭，但是还是可以通过 `rosnode` 看到该节点（该节点没有完全从 `rosmaster` 中注销成功），若要通过命令行注销则需要使用 `rosnode cleanup`
+- 使用 `kill -s 9` 作用于 launch 进程时，其管理的节点可能不会成功退出，因此在 rosnode 中仍然能看到，使用 `kill -s 2`
+
+![](https://natsu-akatsuki.oss-cn-guangzhou.aliyuncs.com/img/image-20220627101048101.png ':size=500')
+
+</details>
