@@ -10,14 +10,14 @@
 ```bash
 # >>> 回放 >>>
 (ROS) $ rosbag play <包名>
-(ROS 2) $ ros2 bag play <包目录>
+(ROS2) $ ros2 bag play <包目录>
 
 # >>> 只发布特定主题的消息 >>
 (ROS) $ rosbag play school.bag --topics /rslidar_points
 
 # >>> 主题重映射 >>>
 (ROS) $ rosbag play school.bag /rslidar_points:=/velodyne_points
-(ROS 2) $ ros2 bag play school --remap /rslidar_points:=/velodyne_points
+(ROS2) $ ros2 bag play school --remap /rslidar_points:=/velodyne_points
 
 # 只发布特定主题的消息 + 主题重映射 
 (ROS) $ rosbag play school.bag --topics /rslidar_points /rslidar_points:=/velodyne_points
@@ -25,12 +25,12 @@
 
 # >>> 指定位置播放 >>>
 (ROS) $ rosbag play <包名> -s 50
-(ROS 2) $ ros2 bag play <包名> --start-offset 100
+(ROS2) $ ros2 bag play <包名> --start-offset 100
 
 # >>> 录制 >>>
 (ROS) $ rosbag record <主题名>
 # ROS2 导出的是一个文件夹
-(ROS 2) $ ros2 bag record -a
+(ROS2) $ ros2 bag record -a
 
 # >>> 裁剪 >>>
 # 这种时刻指的是 ROS 时间戳，类似 1576119471.511449 
@@ -41,6 +41,7 @@
 
 # >>> 只播放特定一段时间的数据 >>>
 (ROS) $ rosbag play -u <秒>
+(ROS2 iron) $ rosbag play --playback-until-sec <秒>
 
 # >>> 等待所有主题都有订阅器订阅器时才发布数据 >>>
 (ROS) $ rosbag play <包名> --wait-for-subscribers
