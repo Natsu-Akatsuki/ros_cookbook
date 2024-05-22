@@ -4,9 +4,7 @@
 >
 >`.xml`文件在 ROS1 下无法被`roslaunch`识别而补全
 
-## Usage
-
-### attribute
+## attribute
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -35,7 +33,7 @@
 
 </details>
 
-### substitution
+## substitution
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -49,7 +47,7 @@
 
 </details>
 
-### tag
+## tag
 
 具体参考 [ROS1](http://wiki.ros.org/roslaunch/XML#Tag_Reference)
 
@@ -143,7 +141,7 @@
 
 </details>
 
-### Python
+## Python
 
 <details>
     <summary>:wrench: <b>用例 1：</b>
@@ -255,6 +253,17 @@ TimerAction(
 > [!note]
 >
 > `roslaunch` 在启动节点前，会提前解析 `substitution args` 和导入参数 `param` 到参数服务器
+
+## Usage
+
+<details>
+    <summary>:wrench: <b>用例 1：</b>
+        <a href="https://github.com/ros/ros_comm/issues/254">使某些 launch 文件不被 roslaunch 识别（hide the launch files only intended to be included from the tab completion）</a>
+    </summary>
+
+将 .launch 文件的后缀名改为 .launch.xml
+
+</details>
 
 ## Tools
 
