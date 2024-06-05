@@ -10,6 +10,8 @@
 ```bash
 # >>> 回放 >>>
 (ROS) $ rosbag play <包名>
+# 串行回放多个 bag
+(ROS) $ rosbag play <包名1> <包名2> <...>
 (ROS2) $ ros2 bag play <包目录>
 
 # >>> 只发布特定主题的消息 >>
@@ -37,6 +39,7 @@
 (ROS) $ rosbag filter <输入包名> <输出包名> "t.to_sec() < 某个时刻 and t.to_sec() > 某个时刻"
 
 # >>> 压缩和解压 >>>
+# --lz4：指定用 lz4 压缩，实测不需要显式解压即能 rosbag play
 (ROS) $ rosbag compress/decompress <待压缩的包名>
 
 # >>> 只播放特定一段时间的数据 >>>
@@ -149,6 +152,8 @@ output_bag.write("/tf", tf_msg, msg.header.stamp)
     </summary>
 
 ```bash
+# 建议先 merge 完再 compress，因为在合并时，也是需要先隐式 decompress 的
+
 $ pip3 install rosbag-merge
 # 合并当前目录下的 bag 文件
 $ rosbag-merge --write_bag --outbag_name <包名>
