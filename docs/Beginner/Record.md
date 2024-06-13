@@ -9,45 +9,48 @@
 
 ```bash
 # >>> 回放 >>>
-(ROS) $ rosbag play <包名>
+(ROS1) $ rosbag play <包名>
 # 串行回放多个 bag
-(ROS) $ rosbag play <包名1> <包名2> <...>
+(ROS1) $ rosbag play <包名1> <包名2> <...>
 (ROS2) $ ros2 bag play <包目录>
 
 # >>> 只发布特定主题的消息 >>
-(ROS) $ rosbag play school.bag --topics /rslidar_points
+(ROS1) $ rosbag play school.bag --topics /rslidar_points
 
 # >>> 主题重映射 >>>
-(ROS) $ rosbag play school.bag /rslidar_points:=/velodyne_points
+(ROS1) $ rosbag play school.bag /rslidar_points:=/velodyne_points
 (ROS2) $ ros2 bag play school --remap /rslidar_points:=/velodyne_points
 
-# 只发布特定主题的消息 + 主题重映射 
-(ROS) $ rosbag play school.bag --topics /rslidar_points /rslidar_points:=/velodyne_points
-(ROS) $ rosbag play flash_light.bag --topics /camera_1/image_raw /imu/data /camera_1/image_raw:=/rgb/image
+# 只发布特定主题的消息 + 主题重映射（需要分两步：不能直接在 --topics 选项中加入重映射）
+(ROS1) $ rosbag play school.bag --topics /rslidar_points /rslidar_points:=/velodyne_points
+(ROS1) $ rosbag play flash_light.bag --topics /camera_1/image_raw /imu/data /camera_1/image_raw:=/rgb/image
 
 # >>> 指定位置播放 >>>
-(ROS) $ rosbag play <包名> -s 50
+(ROS1) $ rosbag play <包名> -s 50
 (ROS2) $ ros2 bag play <包名> --start-offset 100
 
+# >>> 基于 rosbag 提供时钟源 >>>
+(ROS1) $ rosbag play <包名> --clock
+
 # >>> 录制 >>>
-(ROS) $ rosbag record <主题名>
+(ROS1) $ rosbag record <主题名>
 # ROS2 导出的是一个文件夹
 (ROS2) $ ros2 bag record -a
 
 # >>> 裁剪 >>>
 # 这种时刻指的是 ROS 时间戳，类似 1576119471.511449 
-(ROS) $ rosbag filter <输入包名> <输出包名> "t.to_sec() < 某个时刻 and t.to_sec() > 某个时刻"
+(ROS1) $ rosbag filter <输入包名> <输出包名> "t.to_sec() < 某个时刻 and t.to_sec() > 某个时刻"
 
 # >>> 压缩和解压 >>>
 # --lz4：指定用 lz4 压缩，实测不需要显式解压即能 rosbag play
-(ROS) $ rosbag compress/decompress <待压缩的包名>
+(ROS1) $ rosbag compress/decompress <待压缩的包名>
 
 # >>> 只播放特定一段时间的数据 >>>
-(ROS) $ rosbag play -u <秒>
+(ROS1) $ rosbag play -u <秒>
 (ROS2 iron) $ rosbag play --playback-until-sec <秒>
 
-# >>> 等待所有主题都有订阅器订阅器时才发布数据 >>>
-(ROS) $ rosbag play <包名> --wait-for-subscribers
+# >>> 等待所有主题都被订阅时才发布数据 >>>
+(ROS1) $ rosbag play <包名> --wait-for-subscribers
 ```
 
 </details>
@@ -165,10 +168,7 @@ $ rosbag-merge --write_bag --outbag_name <包名>
     <summary>:wrench: <b>用例 6：</b>
         解决 ROS1 中 rosbag 开头丢包的问题
     </summary>
-
-[由于播包开始时订阅器和发布器尚未构成通路，则 rosbag 发的数据或会丢失](https://robotics.stackexchange.com/questions/83136/data-loss-between-publisher-and-subscriber)
-
-可以在 rosbag play 时使用 `--wait-for-subscribers` 选项，等订阅器和发布器通路搭好了才发布数据（关于“通路具体指什么”，暂未知）
+[由于播包开始时订阅器和发布器尚未构成通路，则 rosbag 发的数据或会丢失](https://robotics.stackexchange.com/questions/83136/data-loss-between-publisher-and-subscriber)；可以在 rosbag play 时使用 `--wait-for-subscribers` 选项，等订阅器和发布器初始化后才发布数据。
 
 </details>
 
@@ -180,5 +180,6 @@ $ rosbag-merge --write_bag --outbag_name <包名>
 
 ## Reference
 
-- Official demo for [ROS1](http://wiki.ros.org/rosbag/Cookbook) and [ROS2](https://github.com/ros2/rosbag2/tree/rolling/rosbag2_py/test)
-- GitHub code snippet：[ROS2](https://github.com/ros2/rosbag2/tree/rolling/rosbag2_py/test)
+| 摘要   | ROS2                                                         | ROS1                                |
+|------|--------------------------------------------------------------|-------------------------------------|
+| 官方用例 | https://github.com/ros2/rosbag2/tree/rolling/rosbag2_py/test | http://wiki.ros.org/rosbag/Cookbook |
