@@ -42,7 +42,8 @@
 (ROS1) $ rosbag filter <输入包名> <输出包名> "t.to_sec() < 某个时刻 and t.to_sec() > 某个时刻"
 
 # >>> 压缩和解压 >>>
-# --lz4：指定用 lz4 压缩，实测不需要显式解压即能 rosbag play
+# --lz4：指定用 lz4 压缩，--bz2: 指定用 bz2 压缩（压缩能力更强，但压缩速度很慢）
+# 实测不需要显式解压即能 rosbag play
 (ROS1) $ rosbag compress/decompress <待压缩的包名>
 
 # >>> 只播放特定一段时间的数据 >>>

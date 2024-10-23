@@ -2,7 +2,26 @@
 
 ## ROS1
 
-具体参考 [Here](http://wiki.ros.org/noetic/Installation)
+具体参考：[Here](https://wiki.ros.org/noetic/Installation/Ubuntu)
+
+```bash
+# >>> 配置秘钥 >>>
+# 方案 1：官方源
+$ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+$ curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+
+# 方案 2：清华源
+$ sudo sh -c '. /etc/lsb-release && echo "deb http://mirrors.tuna.tsinghua.edu.cn/ros/ubuntu/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list'
+$ sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+
+# >>> 安装 >>>
+$ sudo apt update
+$ sudo apt install ros-noetic-desktop-full
+$ sudo apt install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential
+
+# >>> 导入环境变量 >>>
+$ echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+```
 
 ## ROS2
 

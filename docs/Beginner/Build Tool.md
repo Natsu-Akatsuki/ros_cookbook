@@ -128,6 +128,15 @@ $ alias catkin_release="catkin build --profile release"
 
 </details>
 
+<details>
+    <summary>:question: <b>问题 1：</b> 
+        <a href="https://answers.ros.org/question/335290/build-error-unable-to-find-source-space-homeusrdesktopsrc/">catkin build 无法触发补全</a>
+    </summary>
+
+可能存在嵌套的 .catkin_tools 干扰 
+
+</details>
+
 ### colcon
 
 具体参考 [Here](https://colcon.readthedocs.io/en/released/user/quick-start.html)
